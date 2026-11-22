@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.mymemory.translated.net blob:; worker-src 'self' blob:; frame-ancestors 'none'"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy - Folix</title><meta name="theme-color" content="#e8600a">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Folix">
+
+<script>try{var t=localStorage.getItem('folix.theme');if(t==='dark'||t==='dark-ui'||t==='sepia')document.documentElement.dataset.theme=t;else if(localStorage.getItem('folix.dark')==='1')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+<div class="ticker" aria-hidden="true"><div class="tk"><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span></div></div>
+<header class="top"><a class="brand" href="index.html"><img src="assets/icon-192.png" alt=""><b>Folix</b></a>
+<button type="button" class="thm" data-theme-toggle aria-label="Change theme"><img src="assets/icons/contrast.svg" alt=""></button>
+<button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><img src="assets/icons/menu.svg" alt=""></button>
+<nav id="nav" aria-label="Main"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></nav></header>
+<main><div class="t"><h1>Privacy Policy</h1></div><div class="wrap"><article class="card"><p class="up">Last updated: <span data-cfg="updated"></span></p>
+<p>Folix is designed from first principles around <b>local execution and radical user privacy</b>. Folix is an open-source project by <b>Yash Arya</b> (<a href="https://yash29xd.github.io/floppersblop/" target="_blank" rel="noopener" style="color:var(--o);font-weight:700"><span data-cfg="owner"></span></a>).</p>
+
+<h2>1. Zero Server Uploads &amp; Complete Local Isolation</h2>
+<p>When you open a PDF document in Folix, the file is read directly from your disk or device memory using standard HTML5 File APIs. The document bytes are parsed and rasterized exclusively in your browser session. <b>No document pages, text, or metadata are ever uploaded to, stored on, or transmitted across our servers or any third-party clouds.</b></p>
+
+<h2>2. No Accounts, No Analytics, No Tracking Cookies</h2>
+<p>Folix does not require user accounts, logins, or authentication. Folix operates with <b>zero tracking cookies, zero marketing trackers, and zero third-party telemetry scripts</b> (no Google Analytics, no Facebook Pixels, no Hotjar, and no ad networks).</p>
+
+<h2>3. Local Device Storage Usage</h2>
+<p>To provide a seamless desktop-grade experience, Folix stores specific state variables solely within your browser's private storage (<code>localStorage</code> and <code>IndexedDB</code>):</p>
+<ul>
+  <li><b>Application Preferences:</b> UI theme selection (Light, Sepia, Dark mode), zoom preferences, and consent dismissal state (<code>folix.consent</code>).</li>
+  <li><b>Reading State &amp; Vector Annotations:</b> Your last-read page number, handwritten pen/highlighter strokes, sticky notes, and text annotations are saved in <code>localStorage</code>, keyed to a cryptographic SHA-256 fingerprint of the document content rather than its filename.</li>
+  <li><b>Saved Signatures:</b> If you create a reusable digital signature via the Draw or Type tool, its vector paths or render data are stored in your browser's local storage so you can easily reuse it.</li>
+  <li><b>Recent Documents (Optional):</b> When the "Recent Files" feature is active, up to 12 previously opened documents (along with low-resolution thumbnail previews) are stored in your browser's private <code>IndexedDB</code> database. You can clear individual entries or the entire list at any time, or disable recent file caching from the main menu.</li>
+</ul>
+<p>All stored data remains strictly on your device. Clearing your browser's site data or cache immediately erases all stored information.</p>
+
+<h2>4. On-Device Text Recognition (OCR)</h2>
+<p>Optical Character Recognition is powered by a WebAssembly build of Tesseract.js running in a local Web Worker. Scanned images are processed entirely on your CPU/GPU within the browser sandbox. Downloaded OCR language models (such as Italian or English) are cached in your local browser Cache API for offline use. <b>No scanned pages, bitmap fragments, or recognized text are ever transmitted to any remote server.</b></p>
+
+<h2>5. Translation and External Services</h2>
+<ul>
+  <li><b>On-Device AI Translation (Default):</b> On Chromium-based browsers supporting native translation models (such as modern Chrome or Edge), translations run entirely on-device without any network traffic.</li>
+  <li><b>Optional MyMemory Fallback:</b> If on-device translation models are unavailable and you explicitly check "Allow online translation", the selected text snippets are sent via HTTPS to the free MyMemory translation API (<code>api.mymemory.translated.net</code>). This service is strictly opt-in and disabled by default.</li>
+  <li><b>External Reference Lookups:</b> The Dictionary button opens WordReference or Google Search in a separate browser tab, and the Google Translate link opens translate.google.com. These external navigations only occur upon explicit user interaction.</li>
+  <li><b>Static Web Hosting:</b> The static application files are hosted via GitHub Pages, which logs standard HTTP request headers (such as IP address and user-agent) in accordance with GitHub's Global Privacy Policy.</li>
+</ul>
+
+<h2>6. Opening Remote Documents via URL</h2>
+<p>When opening a document via the <code>?file=</code> query parameter, your browser executes a direct client-side <code>fetch()</code> request to retrieve the PDF from the provided remote URL. Folix acts only as the viewing client.</p>
+
+<h2>7. Inquiries &amp; Source Code Verification</h2>
+<p>Because Folix is open-source, you can independently inspect the entire codebase, service worker, and network activity on <a href="https://github.com/Yash29xd/folix-modern" target="_blank" rel="noopener">GitHub</a>. For questions or concerns, please contact <a data-mail href="#"><span data-cfg="email"></span></a>.</p>
+</article></div></main>
+<footer><nav class="nav" aria-label="Site"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="copyright.html">Copyright</a><button type="button" class="thm-f" data-theme-toggle="text"></button></nav><div>&copy; <span data-cfg="year"></span> <a href="https://yash29xd.github.io/floppersblop/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;font-weight:700"><span data-cfg="owner"></span></a> &middot; v<span data-cfg="version"></span></div></footer>
+<script src="config.js"></script><script src="app.js"></script></body></html>
