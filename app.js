@@ -1978,7 +1978,7 @@ async function trSelection(t){
  * into the `#more` dropdown popup sheet via DOM comment placeholders.
  */
 const bar=document.querySelector('.bar'),moreB=$('moreb'),moreP=$('more'),mnav=$('mnav'),mbtn=$('mbtn');
-const ORDER=['pin','pr','dl','share','g-tools','g-view','g-search','ann','g-zoom','sb','g-nav'];
+const ORDER=['pin','share','g-view','g-search','ann','g-zoom','sb','g-nav'];
 let moved=[];
 const overflows=()=>bar.scrollWidth>bar.clientWidth+1;
 function closePops(){
@@ -1997,7 +1997,7 @@ function popAt(p,anchor,right){
   const r=anchor.getBoundingClientRect(),vw=document.documentElement.clientWidth;
   p.style.top=(r.bottom+6)+'px';p.style.left='8px';p.style.right='auto';
   p.classList.add('open');anchor.setAttribute('aria-expanded','true');
-  if(vw<=520&&p===moreP){p.style.right='8px'}      // phones: full-width sheet under the bar
+  if((vw<=720||vw<=document.body.clientWidth)&&p===moreP){p.style.left='8px';p.style.right='8px';p.style.width='auto'}      // phones: full-width sheet under the bar
   else{const w=p.offsetWidth;p.style.left=Math.max(8,Math.min(right?r.right-w:r.left,vw-w-8))+'px'}
 }
 function fitBar(){
@@ -2020,9 +2020,13 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#top-menus'))closeAllMenus();
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePops();closeAllMenus()}});
-let fbT;addEventListener('resize',()=>{clearTimeout(fbT);fbT=setTimeout(fitBar,80)});
+let fbT;
+addEventListener('resize',()=>{clearTimeout(fbT);fbT=setTimeout(fitBar,80)});
+addEventListener('orientationchange',()=>{clearTimeout(fbT);fbT=setTimeout(fitBar,100)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitBar);
 fitBar();
+setTimeout(fitBar,50);
+setTimeout(fitBar,250);
 // top bar: pinned (always visible) or auto-hide (hides scrolling down, returns scrolling up)
 const chrome=$('chrome');let mode='pin',lastY=0;
 try{mode=localStorage.getItem('folix.bar')==='auto'?'auto':'pin'}catch(e){}
