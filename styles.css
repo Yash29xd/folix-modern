@@ -77,7 +77,9 @@ h1,h2,.brand,.btn,.tile{font-family:var(--font-heading);letter-spacing:-.01em}
 .top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--w);border-bottom:1px solid var(--bd);z-index:20;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font-size:22px;line-height:1;letter-spacing:-.02em}
 .brand img{width:36px;height:36px;border:none;border-radius:10px;background:transparent;box-shadow:none}
-#nav{display:flex;gap:4px}
+#nav{display:flex;align-items:center;gap:4px}
+#nav .nav-section-title,#nav .nav-grid,#nav .nav-sub-btn,#nav a[href*="privacy"],#nav a[href*="terms"]{display:none}
+#nav .nav-links{display:flex;gap:4px}
 #nav a{padding:8px 14px;border:none;background:transparent;color:var(--ink);text-decoration:none;font-size:13px;border-radius:var(--radius-sm);box-shadow:none;transition:var(--transition);text-transform:none;font-weight:500}
 #nav a:hover{background:var(--y);color:var(--o)}
 #nav a:active{transform:scale(.97)}
@@ -149,23 +151,103 @@ footer div{text-align:center;color:var(--fg-footer-muted)}
 .hide{display:none!important}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:860px){
+@media(max-width:960px){
  .menu-bar{display:none!important}
  .top-left{gap:0}
-}
-@media(max-width:720px){
- .top{padding:6px 12px;padding-top:calc(6px + env(safe-area-inset-top));gap:8px}
+ .burger{display:inline-flex!important;width:38px;height:38px}
+ .thm{width:38px;height:38px}
+ .top{padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top));gap:8px}
  .top-left{flex:1;min-width:0}
- .top-right{flex:none;display:flex;align-items:center;gap:6px}
- .burger{display:inline-flex;width:36px;height:36px}
- .thm{width:36px;height:36px}
- #nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--w);border-bottom:2px solid var(--bd);padding:10px 14px;gap:6px;grid-template-columns:1fr 1fr;box-shadow:0 12px 32px rgba(0,0,0,.18);z-index:999}
- .top.open #nav{display:grid}
- #nav a{text-align:center;padding:10px 8px;background:var(--paper);border-radius:var(--radius-xs);font-weight:600;font-size:13px;color:var(--ink);border:1px solid var(--bd);text-decoration:none}
- #nav a:hover,#nav a:active{background:var(--y);color:var(--o);border-color:rgba(232,96,10,.3)}
+ .top-right{flex:none;display:flex;align-items:center;gap:8px}
+ .brand{font-size:19px;gap:8px}
+ .brand img{width:30px;height:30px}
+
+ /* Mobile / Tablet Hamburger Navigation Drawer */
+ #nav{
+   display:none;
+   position:absolute;
+   top:100%;
+   left:0;
+   right:0;
+   background:var(--w);
+   border-bottom:2px solid var(--bd);
+   padding:14px 16px;
+   box-shadow:0 16px 40px rgba(0,0,0,.2);
+   z-index:9999;
+   max-height:calc(100vh - 65px);
+   max-height:calc(100dvh - 65px);
+   overflow-y:auto;
+   flex-direction:column;
+   gap:10px;
+ }
+ .top.open #nav{display:flex!important}
+ .nav-section-title{
+   display:block!important;
+   font-size:11px;
+   font-weight:700;
+   letter-spacing:.05em;
+   text-transform:uppercase;
+   color:var(--text-muted);
+   margin-bottom:2px;
+ }
+ .nav-grid{
+   display:grid!important;
+   grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+   gap:8px;
+   width:100%;
+ }
+ .nav-btn{
+   display:flex!important;
+   align-items:center;
+   gap:8px;
+   height:38px;
+   padding:0 10px;
+   background:var(--paper);
+   border:1px solid var(--bd);
+   border-radius:var(--radius-xs);
+   font-size:13px;
+   font-weight:600;
+   color:var(--ink);
+   cursor:pointer;
+   box-shadow:none;
+   justify-content:flex-start;
+   width:100%;
+ }
+ .nav-btn:hover,.nav-btn:active{
+   background:var(--y);
+   color:var(--o);
+   border-color:rgba(232,96,10,.3);
+ }
+ .nav-btn img{width:18px;height:18px}
+ .nav-links{
+   display:grid!important;
+   grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+   gap:6px;
+   width:100%;
+ }
+ .nav-links a,.nav-sub-btn{
+   display:flex!important;
+   align-items:center;
+   justify-content:center;
+   padding:8px 10px;
+   background:var(--paper);
+   border:1px solid var(--bd);
+   border-radius:var(--radius-xs);
+   font-size:12px;
+   font-weight:600;
+   color:var(--ink);
+   text-decoration:none;
+   box-shadow:none;
+   min-width:0;
+   height:auto;
+   text-align:center;
+ }
+ .nav-links a:hover,.nav-links a:active,.nav-sub-btn:hover,.nav-sub-btn:active{
+   background:var(--y);
+   color:var(--o);
+   border-color:rgba(232,96,10,.3);
+ }
  footer .nav{grid-template-columns:repeat(2,auto)}
- .brand{font-size:18px;gap:8px}
- .brand img{width:28px;height:28px}
  .bar{
    overflow-x:auto!important;
    overflow-y:hidden!important;
@@ -496,8 +578,8 @@ html:is([data-theme=dark],[data-theme=dark-ui]) .card h2{background:var(--o);col
 html:is([data-theme=dark],[data-theme=dark-ui]) .card a{background:none;color:var(--yb);text-decoration:underline}
 html:is([data-theme=dark],[data-theme=dark-ui]) .card a.btn{background:var(--o);color:#fff;text-decoration:none}
 html:is([data-theme=dark],[data-theme=dark-ui]) .card code{background:#1e1e24;border-color:rgba(255,255,255,.12);color:#ff9550}
-html:is([data-theme=dark],[data-theme=dark-ui]) #nav a,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav a,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav button{background:#16161c;border-color:rgba(255,255,255,.08);color:var(--ink)}
-html:is([data-theme=dark],[data-theme=dark-ui]) #nav a:hover,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav a:hover,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav button:hover{background:#22222a;color:var(--o)}
+html:is([data-theme=dark],[data-theme=dark-ui]) #nav a,html:is([data-theme=dark],[data-theme=dark-ui]) .nav-btn,html:is([data-theme=dark],[data-theme=dark-ui]) .nav-sub-btn,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav a,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav button{background:#16161c;border-color:rgba(255,255,255,.08);color:var(--ink)}
+html:is([data-theme=dark],[data-theme=dark-ui]) #nav a:hover,html:is([data-theme=dark],[data-theme=dark-ui]) .nav-btn:hover,html:is([data-theme=dark],[data-theme=dark-ui]) .nav-sub-btn:hover,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav a:hover,html:is([data-theme=dark],[data-theme=dark-ui]) #mnav button:hover{background:#22222a;color:var(--o)}
 html:is([data-theme=dark],[data-theme=dark-ui]) .burger,html:is([data-theme=dark],[data-theme=dark-ui]) .thm{background:#16161c;border-color:rgba(255,255,255,.1);color:var(--ink)}
 html:is([data-theme=dark],[data-theme=dark-ui]) .thm:hover{background:#22222a}
 html:is([data-theme=dark],[data-theme=dark-ui]) .abar .sw{border:1px solid rgba(255,255,255,.25)}

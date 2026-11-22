@@ -16,7 +16,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Folix">
 
 <script>try{var t=localStorage.getItem('folix.theme');if(t==='auto'){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark-ui':'light'}else if(t==='dark'||t==='dark-ui'||t==='sepia'||t==='light')document.documentElement.dataset.theme=t;else if(localStorage.getItem('folix.dark')==='1')document.documentElement.dataset.theme='dark-ui'}catch(e){}</script>
-<link rel="stylesheet" href="styles.css?v=3.2"></head>
+<link rel="stylesheet" href="styles.css?v=3.3"></head>
 <body class="app">
 <div id="chrome">
 <div class="ticker" aria-hidden="true"><div class="tk"><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span></div></div>
@@ -141,7 +141,29 @@
     </div>
   </div>
   <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><img src="assets/icons/menu.svg" alt=""></button>
-  <nav id="nav" aria-label="Main"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></nav>
+  <nav id="nav" aria-label="Main">
+    <div class="nav-section-title">Tools &amp; Actions</div>
+    <div class="nav-grid">
+      <button type="button" class="nav-btn" data-action="open"><img class="ic" src="assets/icons/open.svg" alt=""><span>Open PDF</span></button>
+      <button type="button" class="nav-btn" data-action="dl"><img class="ic" src="assets/icons/download.svg" alt=""><span>Download</span></button>
+      <button type="button" class="nav-btn" data-action="ann"><img class="ic" src="assets/icons/pen.svg" alt=""><span>Annotations</span></button>
+      <button type="button" class="nav-btn" data-action="ptb"><img class="ic" src="assets/icons/pages-edit.svg" alt=""><span>Page Tools</span></button>
+      <button type="button" class="nav-btn" data-action="ocrb"><img class="ic" src="assets/icons/ocr.svg" alt=""><span>OCR Text</span></button>
+      <button type="button" class="nav-btn" data-action="trdoc"><img class="ic" src="assets/icons/translate.svg" alt=""><span>Translate</span></button>
+      <button type="button" class="nav-btn" data-action="tts"><img class="ic" src="assets/icons/speaker.svg" alt=""><span>Read Aloud</span></button>
+      <button type="button" class="nav-btn" data-action="share"><img class="ic" src="assets/icons/share.svg" alt=""><span>Share PDF</span></button>
+    </div>
+    <div class="nav-section-title" style="margin-top:6px">Site Pages</div>
+    <div class="nav-links">
+      <a href="index.html">Viewer</a>
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+      <button type="button" class="nav-sub-btn" data-action="hk">Shortcuts (?)</button>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </div>
+  </nav>
 </div>
 </header>
 <div class="bar" role="toolbar" aria-label="PDF controls">
@@ -237,4 +259,4 @@
 <script src="lib/ocr/worker-bundle.js?v=2.6"></script>
 <script src="lib/ocr/lang/ita.js"></script>
 <script src="lib/ocr/lang/eng.js"></script>
-<script src="config.js"></script><script src="app.js?v=3.2"></script></body></html>
+<script src="config.js"></script><script src="app.js?v=3.3"></script></body></html>
