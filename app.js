@@ -774,6 +774,102 @@ function annAttach(d,vp){
   });
   annDraw(d);
 }
+let activeAnn=null;
+function deselectAnn(){
+  if(!activeAnn)return;
+  const {wrap}=activeAnn;
+  if(wrap){
+    wrap.classList.remove('sel-active');
+    wrap.querySelectorAll('.ann-stem,.ann-h-rot,.ann-h-res,.ann-h-del').forEach(h=>h.remove());
+  }
+  activeAnn=null;
+}
+function selectAnn(pi,a,wrap,d){
+  if(activeAnn&&activeAnn.wrap===wrap)return;
+  deselectAnn();
+  activeAnn={pi,a,wrap,d};
+  wrap.classList.add('sel-active');
+  const stem=document.createElement('div');stem.className='ann-stem';
+  const rotH=document.createElement('div');rotH.className='ann-h-rot';rotH.textContent='⟳';rotH.title='Drag to rotate';
+  const resH=document.createElement('div');resH.className='ann-h-res';resH.title='Drag to resize';
+  const delH=document.createElement('div');delH.className='ann-h-del';delH.textContent='×';delH.title='Delete';
+  wrap.append(stem,rotH,resH,delH);
+
+  rotH.addEventListener('pointerdown',e=>{
+    e.stopPropagation();e.preventDefault();rotH.setPointerCapture(e.pointerId);
+    const rect=wrap.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    let curDeg=a.rot||0;
+    const mv=ev=>{
+      const rad=Math.atan2(ev.clientY-cy,ev.clientX-cx);
+      let deg=Math.round((rad*180/Math.PI+90)%360);if(deg<0)deg+=360;
+      if(Math.abs(deg)<4||Math.abs(deg-360)<4)deg=0;
+      else if(Math.abs(deg-90)<4)deg=90;
+      else if(Math.abs(deg-180)<4)deg=180;
+      else if(Math.abs(deg-270)<4)deg=270;
+      curDeg=deg;wrap.style.transform='rotate('+curDeg+'deg)';
+    };
+    const up=()=>{
+      rotH.removeEventListener('pointermove',mv);rotH.removeEventListener('pointerup',up);rotH.removeEventListener('pointercancel',up);
+      if((a.rot||0)!==curDeg)modAnn(pi,a,{rot:curDeg});
+    };
+    rotH.addEventListener('pointermove',mv);rotH.addEventListener('pointerup',up);rotH.addEventListener('pointercancel',up);
+  });
+
+  resH.addEventListener('pointerdown',e=>{
+    e.stopPropagation();e.preventDefault();resH.setPointerCapture(e.pointerId);
+    const s=d._s,sx=e.clientX,w0=a.w||wrap.offsetWidth/s,h0=a.h||wrap.offsetHeight/s,z0=a.z||16;
+    const aspect=(w0>0&&h0>0)?(h0/w0):1;let curW=w0,curH=h0,curZ=z0;
+    const mv=ev=>{
+      const dx=(ev.clientX-sx)/s;
+      if(a.t==='sig'){
+        curW=Math.max(30,Math.min(1000,Math.round(w0+dx)));
+        curH=Math.max(15,Math.round(curW*aspect));
+        wrap.style.width=curW*s+'px';wrap.style.height=curH*s+'px';
+      }else if(a.t==='text'){
+        const sc=Math.max(.4,(w0+dx)/w0);
+        curZ=Math.max(9,Math.min(96,Math.round(z0*sc)));
+        wrap.style.fontSize=curZ*s+'px';
+      }
+    };
+    const up=()=>{
+      resH.removeEventListener('pointermove',mv);resH.removeEventListener('pointerup',up);resH.removeEventListener('pointercancel',up);
+      if(a.t==='sig'&&(a.w!==curW||a.h!==curH))modAnn(pi,a,{w:curW,h:curH});
+      else if(a.t==='text'&&a.z!==curZ)modAnn(pi,a,{z:curZ});
+    };
+    resH.addEventListener('pointermove',mv);resH.addEventListener('pointerup',up);resH.addEventListener('pointercancel',up);
+  });
+
+  delH.addEventListener('pointerdown',e=>{
+    e.stopPropagation();e.preventDefault();deselectAnn();delAnn(pi,a);
+  });
+}
+function makeTransformable(wrap,pi,a,d){
+  wrap.classList.add('ann-trans');wrap.style.transform='rotate('+(a.rot||0)+'deg)';
+  wrap.setAttribute('data-ann-id',a._id=a._id||('ann_'+Math.random().toString(36).slice(2)));
+  wrap.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.ann-h-rot')||e.target.closest('.ann-h-res')||e.target.closest('.ann-h-del')||e.target.closest('.ann-stem'))return;
+    if(tool==='er'){e.preventDefault();deselectAnn();delAnn(pi,a);return}
+    if(wrap.isContentEditable)return;
+    selectAnn(pi,a,wrap,d);e.preventDefault();wrap.setPointerCapture(e.pointerId);
+    const s=d._s,sx=e.clientX,sy=e.clientY,f0=fwd(d,a.x,a.y);let curX=a.x,curY=a.y,moved=false;
+    const mv=ev=>{
+      const dx=(ev.clientX-sx)/s,dy=(ev.clientY-sy)/s;
+      if(Math.hypot(dx,dy)>2)moved=true;
+      wrap.style.left=((f0[0]+dx)*s)+'px';wrap.style.top=((f0[1]+dy)*s)+'px';
+      const p=inv(d,f0[0]+dx,f0[1]+dy);curX=p[0];curY=p[1];
+    };
+    const up=()=>{
+      wrap.removeEventListener('pointermove',mv);wrap.removeEventListener('pointerup',up);wrap.removeEventListener('pointercancel',up);
+      if(moved)modAnn(pi,a,{x:curX,y:curY});
+    };
+    wrap.addEventListener('pointermove',mv);wrap.addEventListener('pointerup',up);wrap.addEventListener('pointercancel',up);
+  });
+}
+document.addEventListener('pointerdown',e=>{
+  if(!activeAnn)return;
+  if(e.target.closest('.ann-trans')||e.target.closest('.abar')||e.target.closest('#sgd')||e.target.closest('.dlg')||e.target.closest('#side'))return;
+  deselectAnn();
+});
 /**
  * Renders all stored annotations for a page into its SVG and DOM overlay layers.
  * Supports ink strokes, transparent text highlights, text boxes, signatures, and sticky notes.
@@ -794,14 +890,16 @@ function annDraw(d){
     }else if(a.t==='text'){
       const p=fwd(d,a.x,a.y),el=document.createElement('div');el.className='tx';el.textContent=a.s;
       el.style.cssText='left:'+p[0]*d._s+'px;top:'+p[1]*d._s+'px;font-size:'+a.z*d._s+'px;color:'+a.c;
-      el.addEventListener('pointerdown',e=>{if(tool==='er'){e.preventDefault();delAnn(pi,a)}});
-      el.addEventListener('click',()=>{if(tool==='tx')editText(el,pi,a)});
+      makeTransformable(el,pi,a,d);
+      el.addEventListener('dblclick',()=>{if(tool==='tx'||!tool)editText(el,pi,a)});
       d._nl.appendChild(el);
+      if(activeAnn&&activeAnn.a===a)selectAnn(pi,a,el,d);
     }else if(a.t==='sig'){
       const p=fwd(d,a.x,a.y),s=d._s,im=document.createElement('img');im.className='sg';im.src=a.img;im.alt='Signature';im.draggable=false;
       im.style.cssText='left:'+p[0]*s+'px;top:'+p[1]*s+'px;width:'+a.w*s+'px;height:'+a.h*s+'px';
-      im.addEventListener('pointerdown',e=>{if(tool==='er'){e.preventDefault();delAnn(pi,a);return}sgDrag(e,im,d,pi,a)});
+      makeTransformable(im,pi,a,d);
       d._nl.appendChild(im);
+      if(activeAnn&&activeAnn.a===a)selectAnn(pi,a,im,d);
     }else if(a.t==='note'){
       const p=fwd(d,a.x,a.y),b=document.createElement('button');b.className='nt';
       b.style.left=p[0]*d._s+'px';b.style.top=p[1]*d._s+'px';b.style.background=a.c;b.setAttribute('aria-label','Note');
@@ -826,7 +924,7 @@ function drawStart(e,d){
   const pt=ev=>{const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;return inv(d,(ev.clientX-r.left)*vb.width/r.width,(ev.clientY-r.top)*vb.height/r.height)};
   const pi=+d.dataset.n-1;
   if(tool==='tx'){e.preventDefault();const p=pt(e);setTimeout(()=>startText(d,pi,p),0);return}
-  if(tool==='sig'){e.preventDefault();if(!sigImg)return;const p=pt(e),w=({2:110,4:160,8:240})[wid]||160,h=w*sigImg.h/sigImg.w;addAnn(pi,{t:'sig',x:p[0]-w/2,y:p[1]-h/2,w,h,img:sigImg.url});setTool('sig');return}
+  if(tool==='sig'){e.preventDefault();if(!sigImg)return;const p=pt(e),w=({2:110,4:160,8:240})[wid]||160,h=w*sigImg.h/sigImg.w;const na={t:'sig',x:p[0]-w/2,y:p[1]-h/2,w,h,img:sigImg.url,rot:0};addAnn(pi,na);setTool('sig');setTimeout(()=>{const el=d._nl&&d._nl.querySelector(`[data-ann-id="${na._id}"]`);if(el)selectAnn(pi,na,el,d)},20);return}
   if(tool==='note'){const p=pt(e);setTimeout(()=>openNote(pi,p),0);return}
   const w=tool==='mk'?wid*3.5:wid,al=tool==='mk'?.35:1,c=col,pts=[pt(e)];
   const path=NS('path',{fill:'none',stroke:c,'stroke-width':w,'stroke-opacity':al,'stroke-linecap':'round','stroke-linejoin':'round'});
@@ -882,6 +980,7 @@ function syncUI(){
  * @param {string} t - Tool identifier.
  */
 function setTool(t){
+  deselectAnn();
   tool=tool===t?null:t;main.dataset.tl=tool||'';
   if(tool&&!picked&&defC[tool])col=defC[tool];
   syncUI();
@@ -960,7 +1059,7 @@ async function outputBytes(){
 async function buildAnnotated(base){
   try{
     await ensurePdfLib();
-    const {PDFDocument,rgb,StandardFonts,LineCapStyle}=window.PDFLib;
+    const {PDFDocument,rgb,StandardFonts,LineCapStyle,degrees}=window.PDFLib;
     let doc;try{doc=await PDFDocument.load(base||bytes)}catch(e){msg('Locked PDFs cannot include annotations');return null}
     const font=await doc.embedFont(StandardFonts.Helvetica),pgs=doc.getPages();
     for(const k of Object.keys(ann)){
@@ -970,8 +1069,8 @@ async function buildAnnotated(base){
         const c=rgb(...hexRgb(a.c||'#000000'));
         if(a.t==='ink'){const q=a.p.map(t=>P(t[0],t[1]));pg.drawSvgPath('M'+q.map(t=>t[0].toFixed(2)+' '+(-t[1]).toFixed(2)).join('L'),{x:0,y:0,borderColor:c,borderWidth:a.w,borderOpacity:a.a,borderLineCap:LineCapStyle.Round})}
         else if(a.t==='hl'){a.r.forEach(r=>{const p1=P(r[0],r[1]),p2=P(r[0]+r[2],r[1]+r[3]);pg.drawRectangle({x:Math.min(p1[0],p2[0]),y:Math.min(p1[1],p2[1]),width:Math.abs(p1[0]-p2[0]),height:Math.abs(p1[1]-p2[1]),color:c,opacity:.4,borderWidth:0})})}
-        else if(a.t==='text'){const p=P(a.x,a.y),sz=a.z;a.s.replace(/[^\x20-\x7E\n]/g,'?').split('\n').forEach((ln,i)=>pg.drawText(ln,{x:p[0],y:p[1]-sz*.85-i*sz*1.2,size:sz,font,color:c}))}
-        else if(a.t==='sig'){const im=await doc.embedPng(a.img),p1=P(a.x,a.y),p2=P(a.x+a.w,a.y+a.h);pg.drawImage(im,{x:Math.min(p1[0],p2[0]),y:Math.min(p1[1],p2[1]),width:Math.abs(p1[0]-p2[0]),height:Math.abs(p1[1]-p2[1])})}
+        else if(a.t==='text'){const p=P(a.x,a.y),sz=a.z,rot=a.rot||0;const lines=a.s.replace(/[^\x20-\x7E\n]/g,'?').split('\n');lines.forEach((ln,i)=>{const opts={x:p[0],y:p[1]-sz*.85-i*sz*1.2,size:sz,font,color:c};if(rot)opts.rotate=degrees(-rot);pg.drawText(ln,opts)})}
+        else if(a.t==='sig'){const im=await doc.embedPng(a.img),p1=P(a.x,a.y),p2=P(a.x+a.w,a.y+a.h);const w=Math.abs(p1[0]-p2[0]),h=Math.abs(p1[1]-p2[1]),rot=a.rot||0;if(rot){const cx=Math.min(p1[0],p2[0])+w/2,cy=Math.min(p1[1],p2[1])+h/2,rad=-rot*Math.PI/180,cos=Math.cos(rad),sin=Math.sin(rad);const x=cx-(w/2*cos-h/2*sin),y=cy-(w/2*sin+h/2*cos);pg.drawImage(im,{x,y,width:w,height:h,rotate:degrees(-rot)})}else{pg.drawImage(im,{x:Math.min(p1[0],p2[0]),y:Math.min(p1[1],p2[1]),width:w,height:h})}}
         else if(a.t==='note'){
           const p=P(a.x,a.y),lines=wrapText(a.s.replace(/[^\x20-\x7E\n]/g,'?'),font,9,150),bh=lines.length*11+8;
           pg.drawRectangle({x:p[0],y:p[1]-14,width:14,height:14,color:c,borderColor:rgb(.04,.04,.04),borderWidth:1.5});
@@ -1056,13 +1155,15 @@ function startText(d,pi,p){
   el.className='tx edit';el.contentEditable='true';el.spellcheck=false;
   el.style.cssText='left:'+q[0]*d._s+'px;top:'+q[1]*d._s+'px;font-size:'+z*d._s+'px;color:'+c;
   d._nl.appendChild(el);el.focus();let done=false;
-  el.addEventListener('blur',()=>{if(done)return;done=true;const s=el.innerText.replace(/\s+$/,'');el.remove();if(s)addAnn(pi,{t:'text',c,x:p[0],y:p[1],s,z})});
+  el.addEventListener('blur',()=>{if(done)return;done=true;const s=el.innerText.replace(/\s+$/,'');el.remove();if(s){const na={t:'text',c,x:p[0],y:p[1],s,z,rot:0};addAnn(pi,na);setTimeout(()=>{const wrap=d._nl&&d._nl.querySelector(`[data-ann-id="${na._id}"]`);if(wrap)selectAnn(pi,na,wrap,d)},20)}});
   el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}e.stopPropagation()});
 }
 function editText(el,pi,a){
-  if(el.isContentEditable)return;el.contentEditable='true';el.classList.add('edit');el.focus();{const rg=document.createRange();rg.selectNodeContents(el);rg.collapse(false);const sl=getSelection();sl.removeAllRanges();sl.addRange(rg)}
+  if(el.isContentEditable)return;
+  deselectAnn();
+  el.contentEditable='true';el.classList.add('edit');el.focus();{const rg=document.createRange();rg.selectNodeContents(el);rg.collapse(false);const sl=getSelection();sl.removeAllRanges();sl.addRange(rg)}
   el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}e.stopPropagation()};
-  el.onblur=()=>{const s=el.innerText.replace(/\s+$/,'');if(!s)delAnn(pi,a);else if(s!==a.s)modAnn(pi,a,{s});else{el.contentEditable='false';el.classList.remove('edit')}};
+  el.onblur=()=>{const s=el.innerText.replace(/\s+$/,'');el.contentEditable='false';el.classList.remove('edit');if(!s)delAnn(pi,a);else if(s!==a.s)modAnn(pi,a,{s})};
 }
 function sgDrag(e,im,d,pi,a){
   e.preventDefault();im.setPointerCapture(e.pointerId);
@@ -1526,7 +1627,7 @@ function ptRender(){
   ptCards.forEach((c,k)=>{
     const el=document.createElement('div');el.className='pc'+(c.sel?' sel':'')+(c.del?' del':'');el.draggable=true;c.el=el;
     const pv=document.createElement('div');pv.className='pv';if(c.cv){pv.appendChild(c.cv);c.cv.style.transform=ptRot(c)}else if(!c.q){c.q=true;ptThumb(c)}
-    const pn=document.createElement('span');pn.className='pn';pn.textContent=(k+1)+(c.d?' (added)':'');
+    const pn=document.createElement('span');pn.className='pn';pn.textContent=(k+1)+(c.isImg?' (Image)':(c.d?' (added)':''));
     const pb=document.createElement('div');pb.className='pb';
     const mk=(t,l,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-label',l);b.title=l;b.onclick=e=>{e.stopPropagation();fn()};pb.appendChild(b)};
     mk('←','Move earlier',()=>{if(k>0){[ptCards[k-1],ptCards[k]]=[ptCards[k],ptCards[k-1]];ptRender()}});
@@ -1545,6 +1646,41 @@ async function ptBase(){const o=await outputBytes();if(!o)throw new Error('Could
 async function ptBuild(list){
   await ensurePdfLib();const {PDFDocument,degrees}=window.PDFLib,out=await PDFDocument.create(),src=[];
   for(const c of list){
+    if(c.isImg){
+      let embedded;
+      try{
+        if(c.mime==='image/jpeg'||c.mime==='image/jpg'){
+          embedded=await out.embedJpg(c.bytes);
+        }else if(c.mime==='image/png'){
+          embedded=await out.embedPng(c.bytes);
+        }else{
+          const cv=document.createElement('canvas');cv.width=c.w;cv.height=c.h;
+          const ctx=cv.getContext('2d'),im=new Image();
+          await new Promise((res,rej)=>{im.onload=res;im.onerror=rej;im.src=URL.createObjectURL(new Blob([c.bytes],{type:c.mime}))});
+          ctx.drawImage(im,0,0);
+          const pngBlob=await new Promise(res=>cv.toBlob(res,'image/png'));
+          const pngBytes=new Uint8Array(await pngBlob.arrayBuffer());
+          embedded=await out.embedPng(pngBytes);
+        }
+      }catch(e){
+        const cv=document.createElement('canvas');cv.width=c.w;cv.height=c.h;
+        const ctx=cv.getContext('2d'),im=new Image();
+        await new Promise((res,rej)=>{im.onload=res;im.onerror=rej;im.src=URL.createObjectURL(new Blob([c.bytes],{type:c.mime||'image/png'}))});
+        ctx.drawImage(im,0,0);
+        const pngBlob=await new Promise(res=>cv.toBlob(res,'image/png'));
+        const pngBytes=new Uint8Array(await pngBlob.arrayBuffer());
+        embedded=await out.embedPng(pngBytes);
+      }
+      let pw=c.w*0.75,ph=c.h*0.75;
+      if(pw>841.89||ph>1190.55){
+        const sc=Math.min(595.28/pw,841.89/ph);
+        pw*=sc;ph*=sc;
+      }
+      const pg=out.addPage([pw,ph]);
+      pg.drawImage(embedded,{x:0,y:0,width:pw,height:ph});
+      if(c.rot)pg.setRotation(degrees(((pg.getRotation().angle||0)+c.rot)%360));
+      continue;
+    }
     if(!src[c.d]){
       const b=c.d===0?await ptBase():ptDocs[c.d].bytes;
       try{src[c.d]=await PDFDocument.load(b)}catch(e){throw new Error(c.d?'Could not read an added PDF. Locked PDFs are not supported':'Locked PDFs cannot be edited')}
@@ -1562,6 +1698,23 @@ $('ptadd').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
   try{const b=new Uint8Array(await f.arrayBuffer()),p=await lib.getDocument({data:b.slice(0),isEvalSupported:false}).promise;ptDocs.push({p,bytes:b});const d=ptDocs.length-1;for(let i=0;i<p.numPages;i++)ptCards.push({d,i,rot:0,del:false,sel:false});ptRender()}
   catch(x){$('pterr').textContent='Could not read that PDF. Locked PDFs are not supported'}
+};
+$('ptaddimg').onchange=async e=>{
+  const files=Array.from(e.target.files||[]);e.target.value='';if(!files.length)return;
+  $('pterr').textContent='';
+  for(const f of files){
+    try{
+      const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
+      const im=new Image();
+      await new Promise((res,rej)=>{im.onload=res;im.onerror=rej;im.src=dataUrl});
+      const cv=document.createElement('canvas'),maxW=130,sc=maxW/im.naturalWidth;
+      cv.width=maxW;cv.height=Math.max(20,Math.round(im.naturalHeight*sc));
+      const ctx=cv.getContext('2d');ctx.drawImage(im,0,0,cv.width,cv.height);
+      const buf=await f.arrayBuffer();
+      ptCards.push({isImg:true,bytes:new Uint8Array(buf),mime:f.type||'image/png',w:im.naturalWidth,h:im.naturalHeight,cv,rot:0,del:false,sel:false,name:f.name});
+    }catch(x){$('pterr').textContent='Could not read image: '+f.name}
+  }
+  ptRender();
 };
 ptd.addEventListener('close',()=>{ptDocs.slice(1).forEach(x=>{try{x.p.destroy()}catch(e){}})});
 $('ptb').onclick=ptOpen;

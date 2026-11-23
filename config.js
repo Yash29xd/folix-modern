@@ -35,7 +35,7 @@ window.FOLIX_CONFIG = {
   owner: 'FloppersBlop',
 
   /** Application semantic version */
-  version: '1.0.0',
+  version: '1.1.0',
 
   /** Author and maintainer */
   author: 'Yash Arya',
