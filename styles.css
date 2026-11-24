@@ -92,7 +92,7 @@ button:hover,.btn:hover{background:var(--y);border-color:rgba(232,96,10,.2)}
 button:active,.btn:active{transform:scale(.97)}
 button:disabled{opacity:.4;box-shadow:none;cursor:default;transform:none}
 button:focus-visible,.btn:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--o);outline-offset:2px;background:var(--y)}
-button img,.btn img{width:20px;height:20px;pointer-events:none}
+button img,.btn img,button svg.ic,.btn svg.ic,.menu-dropdown svg,.nav-btn svg{width:18px!important;height:18px!important;min-width:18px!important;max-width:18px!important;min-height:18px!important;max-height:18px!important;flex-shrink:0!important;pointer-events:none}
 .pri{background:var(--o);color:#fff;border-color:var(--o);font-size:14px;font-weight:600}
 .pri:hover{background:#d35400;border-color:#d35400}
 
@@ -105,8 +105,14 @@ button img,.btn img{width:20px;height:20px;pointer-events:none}
 .grp button:active{transform:scale(.95)}
 input[type=number],input[type=search]{background:var(--w);color:var(--ink);border:1px solid var(--bd);height:34px;padding:0 10px;font:inherit;font-weight:500;border-radius:var(--radius-xs)}
 #pg{width:56px;text-align:center}
-#q{width:150px}
-#zl,#tot,#cnt{font-weight:600;min-width:40px;text-align:center}
+#q{width:175px}
+#zl,#tot{font-weight:600;min-width:40px;text-align:center}
+#g-search{background:var(--w);padding:2px 4px 2px 6px;gap:2px}
+#g-search img{margin:0 2px;pointer-events:none;flex-shrink:0}
+#g-search #q{border:none!important;background:transparent!important;box-shadow:none!important;height:30px!important;padding:0 6px!important;width:175px;outline:none!important}
+#g-search:focus-within{border-color:var(--o);box-shadow:0 0 0 2px var(--y)}
+#cnt:empty{display:none!important}
+#cnt:not(:empty){display:inline-flex!important;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-muted);padding:0 4px;min-width:0;cursor:pointer}
 
 /* ===== MAIN VIEWER ===== */
 main#main{flex:1;min-height:0;overflow:auto;position:relative;background:var(--paper);-webkit-overflow-scrolling:touch}
@@ -296,7 +302,7 @@ footer .nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 24px}
 .steps li:nth-child(1){border-left:3px solid var(--o)}.steps li:nth-child(2){border-left:3px solid var(--lb)}.steps li:nth-child(3){border-left:3px solid #e67e22}
 .steps b{display:block;font-family:var(--font-heading);font-size:28px;line-height:1;margin-bottom:8px;color:var(--o)}
 @media(max-width:720px){.steps{grid-template-columns:1fr}}
-@media(min-width:721px){.bar{gap:8px;padding:8px 16px}#q{width:110px}}
+@media(min-width:721px){.bar{gap:8px;padding:8px 16px}#q{width:175px}}
 .mailbox .btn{text-transform:none;letter-spacing:0}
 
 /* ===== SIDEBAR ===== */
@@ -333,6 +339,7 @@ footer .nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 24px}
 
 /* ===== DIALOGS ===== */
 dialog{border:none;box-shadow:0 8px 40px rgba(0,0,0,.15),0 2px 12px rgba(0,0,0,.08);background:var(--w);padding:28px;width:min(92vw,440px);color:var(--ink);font:inherit;margin:auto;border-radius:var(--radius)}
+dialog:not([open]){display:none!important}
 dialog::backdrop{background:rgba(0,0,0,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 dialog h2{font-size:22px;margin-bottom:10px}
 dialog p{margin-bottom:14px;font-weight:500}
@@ -727,6 +734,7 @@ html:is([data-theme=dark],[data-theme=dark-ui]) #selres{background:#18181d;borde
 .menu-dropdown{position:absolute;top:100%;left:0;margin-top:4px;min-width:240px;background:var(--w);border:1px solid var(--bd);border-radius:var(--radius-sm);box-shadow:0 12px 36px rgba(0,0,0,.22);padding:6px;display:none;flex-direction:column;gap:2px;z-index:9999}
 .menu-item.open > .menu-dropdown{display:flex!important}
 .menu-dropdown button,.menu-dropdown a{width:100%;height:32px;padding:0 10px;background:transparent;border:none;box-shadow:none;border-radius:var(--radius-xs);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;cursor:pointer;justify-content:flex-start}
+.menu-dropdown button svg,.menu-dropdown a svg,.menu-dropdown button img,.menu-dropdown a img{width:18px!important;height:18px!important;min-width:18px!important;max-width:18px!important;min-height:18px!important;max-height:18px!important;flex-shrink:0!important;pointer-events:none}
 .menu-dropdown button span,.menu-dropdown a span{flex:1;text-align:left}
 .menu-dropdown button kbd{font-size:11px;opacity:.6;background:var(--paper);padding:2px 6px;border-radius:4px;border:1px solid var(--bd);margin-left:auto}
 .menu-dropdown button:hover,.menu-dropdown a:hover{background:var(--y);color:var(--o)}

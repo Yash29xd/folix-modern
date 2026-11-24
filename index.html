@@ -16,7 +16,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Folix">
 
 <script>try{var t=localStorage.getItem('folix.theme');if(t==='auto'){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark-ui':'light'}else if(t==='dark'||t==='dark-ui'||t==='sepia'||t==='light')document.documentElement.dataset.theme=t;else if(localStorage.getItem('folix.dark')==='1')document.documentElement.dataset.theme='dark-ui'}catch(e){}</script>
-<link rel="stylesheet" href="styles.css?v=3.3"></head>
+<link rel="stylesheet" href="styles.css?v=3.3">
+<link rel="stylesheet" href="create.css?v=1.2"></head>
 <body class="app">
 <div id="chrome">
 <div class="ticker" aria-hidden="true"><div class="tk"><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span></div></div>
@@ -28,6 +29,7 @@
     <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false">File <span class="arr">&#9662;</span></button>
     <div class="menu-dropdown">
       <button type="button" data-action="open"><img class="ic" src="assets/icons/open.svg" alt=""><span>Open PDF…</span><kbd>Ctrl+O</kbd></button>
+      <button type="button" data-action="create-pdf"><svg class="ic" width="18" height="18" style="width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Create PDF…</span><kbd>Ctrl+N</kbd></button>
       <button type="button" data-action="ptadd"><img class="ic" src="assets/icons/pages-edit.svg" alt=""><span>Add pages from PDF…</span></button>
       <hr>
       <button type="button" data-action="dl"><img class="ic" src="assets/icons/download.svg" alt=""><span>Download PDF</span><kbd>Ctrl+S</kbd></button>
@@ -145,6 +147,7 @@
     <div class="nav-section-title">Tools &amp; Actions</div>
     <div class="nav-grid">
       <button type="button" class="nav-btn" data-action="open"><img class="ic" src="assets/icons/open.svg" alt=""><span>Open PDF</span></button>
+      <button type="button" class="nav-btn" data-action="create-pdf"><svg class="ic" width="18" height="18" style="width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Create PDF</span></button>
       <button type="button" class="nav-btn" data-action="dl"><img class="ic" src="assets/icons/download.svg" alt=""><span>Download</span></button>
       <button type="button" class="nav-btn" data-action="ann"><img class="ic" src="assets/icons/pen.svg" alt=""><span>Annotations</span></button>
       <button type="button" class="nav-btn" data-action="ptb"><img class="ic" src="assets/icons/pages-edit.svg" alt=""><span>Page Tools</span></button>
@@ -214,7 +217,7 @@
 <main id="main"><div id="pages"></div>
 <div id="empty">
 <section class="hero"><img class="lockup l" src="assets/folix-lockup.png" alt="Folix PDF Viewer"><img class="lockup d" src="assets/folix-lockup-dark.png" alt="" aria-hidden="true">
-<div class="copy"><h1>Drop a <em>PDF.</em> Read it.</h1><p>Private, fast, no uploads. Your file never leaves your browser.</p><label class="btn pri" for="file" tabindex="-1"><img src="assets/icons/open.svg" alt=""><span>Open a PDF</span></label> <button id="install" class="btn hide" type="button"><img src="assets/icons/download.svg" alt=""><span>Install app</span></button>
+<div class="copy"><h1>Drop a <em>PDF.</em> Read it.</h1><p>Private, fast, no uploads. Your file never leaves your browser.</p><div class="hero-actions"><label class="btn pri" for="file" tabindex="-1"><img src="assets/icons/open.svg" alt=""><span>Open a PDF</span></label> <button id="btn-create-pdf" class="btn btn-create" type="button"><svg class="ic" width="18" height="18" style="width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Create PDF</span></button> <button id="install" class="btn hide" type="button"><img src="assets/icons/download.svg" alt=""><span>Install app</span></button></div>
 <button id="hkb2" class="lnk" type="button">Keyboard shortcuts (?)</button></div>
 <div class="pill"><img class="l" src="assets/floppersblop-product.png" alt="FloppersBlop Product"><img class="d" src="assets/floppersblop-product-dark.png" alt="" aria-hidden="true"></div></section>
 <section id="recent" class="recent hide" aria-label="Recent files"><div class="rh"><h2>Recent</h2><button id="rclr" class="lnk" type="button">Clear</button></div><div id="rgrid"></div><p class="rnote">Recent files are kept only in this browser.</p></section>
@@ -224,7 +227,7 @@
 <button id="reveal" class="hide" aria-label="Show top bar">&#9660; BAR</button>
 <dialog id="pw" aria-labelledby="pwt"><form id="pwf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="pwt">Locked PDF</h2></div><button type="button" id="pwx" class="dlg-x" aria-label="Close">&times;</button></div><p id="pwmsg"></p><input id="pwi" type="password" autocomplete="off" aria-label="PDF password" placeholder="PASSWORD"><div class="row"><button type="submit" class="pri" id="pwok">Unlock</button><button type="button" class="btn" onclick="$('pw').close()">Cancel</button></div></form></dialog>
 <dialog id="ntd" aria-labelledby="ntt"><form id="ntf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ntt">Add note</h2></div><button type="button" id="ntc" class="dlg-x" aria-label="Close">&times;</button></div><textarea id="nti" rows="4" maxlength="500" aria-label="Note text" placeholder="TYPE YOUR NOTE"></textarea><div class="row"><button type="submit" class="pri">Add</button><button type="button" class="btn" onclick="$('ntd').close()">Cancel</button></div></form></dialog>
-<dialog id="hk" aria-labelledby="hkt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="hkt">Keyboard shortcuts</h2></div><button type="button" id="hkx" class="dlg-x" aria-label="Close">&times;</button></div><table class="keys"><tr><td><kbd>← →</kbd></td><td>Previous / next page</td></tr><tr><td><kbd>Home / End</kbd></td><td>First / last page</td></tr><tr><td><kbd>Ctrl + F</kbd></td><td>Search</td></tr><tr><td><kbd>Ctrl + / Ctrl −</kbd></td><td>Zoom in / out</td></tr><tr><td><kbd>W</kbd></td><td>Fit width</td></tr><tr><td><kbd>H</kbd></td><td>Fit height</td></tr><tr><td><kbd>R</kbd></td><td>Rotate</td></tr><tr><td><kbd>T</kbd></td><td>Change theme</td></tr><tr><td><kbd>2</kbd></td><td>Two-page view</td></tr><tr><td><kbd>S</kbd></td><td>Pages sidebar</td></tr><tr><td><kbd>A</kbd></td><td>Annotation tools</td></tr><tr><td><kbd>Ctrl + Z / Y</kbd></td><td>Undo / redo</td></tr><tr><td><kbd>Esc</kbd></td><td>Close menu or tool</td></tr><tr><td><kbd>X</kbd></td><td>Translate document</td></tr><tr><td><kbd>O</kbd></td><td>Text recognition (OCR)</td></tr><tr><td><kbd>G</kbd></td><td>Go to page</td></tr><tr><td><kbd>V</kbd></td><td>Read aloud</td></tr><tr><td><kbd>C</kbd></td><td>Fit content (trim margins)</td></tr><tr><td><kbd>E</kbd></td><td>Page tools</td></tr><tr><td><kbd>L</kbd></td><td>Spotlight night reading</td></tr><tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Spotlight smaller / larger</td></tr><tr><td><kbd>?</kbd></td><td>This help</td></tr></table><div class="row"><button type="button" class="pri" onclick="$('hk').close()">Close</button></div></dialog>
+<dialog id="hk" aria-labelledby="hkt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="hkt">Keyboard shortcuts</h2></div><button type="button" id="hkx" class="dlg-x" aria-label="Close">&times;</button></div><table class="keys"><tr><td><kbd>Ctrl + N</kbd></td><td>Create new PDF (Images / Word editor)</td></tr><tr><td><kbd>← →</kbd></td><td>Previous / next page</td></tr><tr><td><kbd>Home / End</kbd></td><td>First / last page</td></tr><tr><td><kbd>Ctrl + F</kbd></td><td>Search</td></tr><tr><td><kbd>Ctrl + / Ctrl −</kbd></td><td>Zoom in / out</td></tr><tr><td><kbd>W</kbd></td><td>Fit width</td></tr><tr><td><kbd>H</kbd></td><td>Fit height</td></tr><tr><td><kbd>R</kbd></td><td>Rotate</td></tr><tr><td><kbd>T</kbd></td><td>Change theme</td></tr><tr><td><kbd>2</kbd></td><td>Two-page view</td></tr><tr><td><kbd>S</kbd></td><td>Pages sidebar</td></tr><tr><td><kbd>A</kbd></td><td>Annotation tools</td></tr><tr><td><kbd>Ctrl + Z / Y</kbd></td><td>Undo / redo</td></tr><tr><td><kbd>Esc</kbd></td><td>Close menu or tool</td></tr><tr><td><kbd>X</kbd></td><td>Translate document</td></tr><tr><td><kbd>O</kbd></td><td>Text recognition (OCR)</td></tr><tr><td><kbd>G</kbd></td><td>Go to page</td></tr><tr><td><kbd>V</kbd></td><td>Read aloud</td></tr><tr><td><kbd>C</kbd></td><td>Fit content (trim margins)</td></tr><tr><td><kbd>E</kbd></td><td>Page tools</td></tr><tr><td><kbd>L</kbd></td><td>Spotlight night reading</td></tr><tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Spotlight smaller / larger</td></tr><tr><td><kbd>?</kbd></td><td>This help</td></tr></table><div class="row"><button type="button" class="pri" onclick="$('hk').close()">Close</button></div></dialog>
 <dialog id="sgd" aria-labelledby="sgt"><form id="sgf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="sgt">Signature</h2></div><button type="button" id="sgx" class="dlg-x" aria-label="Close">&times;</button></div>
 <div id="sgsaved" class="hide"><p>Saved signature</p><img id="sgimg" alt="Saved signature"><button type="button" id="sguse" class="pri">Use saved</button><p class="or">OR CREATE A NEW ONE</p></div>
 <div class="tabs2"><button type="button" id="sgtd" class="on">Draw</button><button type="button" id="sgtt">Type</button></div>
@@ -232,10 +235,241 @@
 <div id="sgtype" class="hide"><input id="sgi" type="text" maxlength="40" placeholder="TYPE YOUR NAME" aria-label="Signature text"><div id="sgprev"></div></div>
 <p id="sgerr" class="err" role="alert"></p>
 <div class="row"><button type="submit" class="pri">Place signature</button><button type="button" class="btn" onclick="$('sgd').close()">Cancel</button></div></form></dialog>
-<dialog id="ptd" aria-labelledby="ptt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ptt">Page tools</h2></div><button type="button" id="ptx" class="dlg-x" aria-label="Close">&times;</button></div><p class="pts">Drag pages to reorder. Rotate, delete or select pages, add pages from another PDF, then apply the changes or save a copy.</p>
+<dialog id="ptd" aria-labelledby="ptt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ptt">Page tools</h2></div><button type="button" id="ptx" class="dlg-x" aria-label="Close">&times;</button></div><p id="ptdesc" class="pts">Drag pages to reorder. Rotate, delete or select pages, add pages from another PDF, then apply the changes or save a copy.</p>
 <div class="ptbar"><button type="button" id="ptall">Select all</button><button type="button" id="ptnone">Clear selection</button><label class="btn" for="ptadd">Add pages from a PDF</label><input id="ptadd" type="file" accept="application/pdf,.pdf" class="hide"><label class="btn" for="ptaddimg">Add image as page</label><input id="ptaddimg" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" multiple class="hide"></div>
 <div id="ptg"></div><p id="pterr" class="err" role="alert"></p>
 <div class="row ptrow"><button type="button" id="ptapply" class="pri">Apply to this document</button><button type="button" id="ptsave">Save a copy</button><button type="button" id="ptext">Extract selected</button></div></dialog>
+<!-- CREATE PDF CHOOSER DIALOG -->
+<dialog id="created" class="dlg-create" aria-labelledby="createt">
+  <div class="dlg-hdr">
+    <div class="dlg-title-wrap">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="var(--o)" stroke-width="2.5" style="width:22px;height:22px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <h2 id="createt">Create PDF</h2>
+    </div>
+    <button type="button" id="createx" class="dlg-x" aria-label="Close">&times;</button>
+  </div>
+  <p class="pts">Choose how you would like to create your new PDF:</p>
+  <div class="create-options">
+    <button type="button" id="opt-create-img" class="create-card">
+      <div class="create-card-icon img-opt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:26px;height:26px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div class="create-card-body">
+        <div class="create-card-title">From Images (PNG, JPG, WebP)</div>
+        <div class="create-card-desc">Select photos or image scans to organize, rotate, reorder, and compile into a multi-page PDF document.</div>
+      </div>
+      <div class="create-card-arr">&rarr;</div>
+    </button>
+    <button type="button" id="opt-create-doc" class="create-card">
+      <div class="create-card-icon doc-opt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:26px;height:26px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div class="create-card-body">
+        <div class="create-card-title">From Text (MS Word Style)</div>
+        <div class="create-card-desc">Write rich text documents with fonts, headings, formatting, lists, tables, and colors, then export or edit as PDF.</div>
+      </div>
+      <div class="create-card-arr">&rarr;</div>
+    </button>
+  </div>
+</dialog>
+<input id="create-img-input" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" multiple class="hide">
+<!-- MS WORD-STYLE DOCUMENT STUDIO DIALOG -->
+<dialog id="word-modal" class="word-studio" aria-label="Folix Document Editor">
+  <div class="word-titlebar">
+    <div class="word-tb-left">
+      <div class="word-app-badge" title="Folix Document Editor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <input id="word-doc-title" class="word-title-input" type="text" value="Document 1" placeholder="Document Name" aria-label="Document Title">
+      <span class="word-tag">Word Studio</span>
+    </div>
+    <div class="word-tb-right">
+      <button type="button" id="word-btn-export" class="word-btn pri" title="Download compiled PDF file">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Export PDF</span>
+      </button>
+      <button type="button" id="word-btn-open-viewer" class="word-btn sec" title="Compile and open in Folix Viewer">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Open in Folix</span>
+      </button>
+      <button type="button" id="word-btn-print" class="word-btn" title="Print document / save vector PDF via browser">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>Print</span>
+      </button>
+      <button type="button" id="word-btn-close" class="word-btn word-btn-close" title="Exit Document Studio and return to Folix">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span>Close</span>
+      </button>
+    </div>
+  </div>
+  <div class="word-ribbon">
+    <div class="word-tabs">
+      <button type="button" class="word-tab active" data-tab="home">Home</button>
+      <button type="button" class="word-tab" data-tab="insert">Insert</button>
+      <button type="button" class="word-tab" data-tab="layout">Layout</button>
+    </div>
+    <div id="word-tab-home" class="word-ribbon-panel active">
+      <div class="word-grp">
+        <div class="word-grp-row">
+          <button type="button" class="word-tool-btn" data-cmd="undo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="redo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg></button>
+        </div>
+        <div class="word-grp-label">Undo</div>
+      </div>
+      <div class="word-grp">
+        <div class="word-grp-row">
+          <select id="word-font-family" class="word-select font-fam" title="Font Family">
+            <option value="Aptos, sans-serif" selected>Aptos (Body)</option>
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Calibri, sans-serif">Calibri</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="'Space Mono', monospace">Space Mono</option>
+            <option value="'Courier New', monospace">Courier New</option>
+            <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+          </select>
+          <select id="word-font-size" class="word-select font-sz" title="Font Size">
+            <option value="1">10 pt</option>
+            <option value="2">11 pt</option>
+            <option value="3" selected>12 pt</option>
+            <option value="4">14 pt</option>
+            <option value="5">18 pt</option>
+            <option value="6">24 pt</option>
+            <option value="7">32 pt</option>
+          </select>
+        </div>
+        <div class="word-grp-row">
+          <button type="button" class="word-tool-btn" data-cmd="bold" title="Bold (Ctrl+B)"><strong>B</strong></button>
+          <button type="button" class="word-tool-btn" data-cmd="italic" title="Italic (Ctrl+I)"><em>I</em></button>
+          <button type="button" class="word-tool-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+          <button type="button" class="word-tool-btn" data-cmd="strikeThrough" title="Strikethrough"><s>ab</s></button>
+          <button type="button" class="word-tool-btn" data-cmd="subscript" title="Subscript">x<sub>2</sub></button>
+          <button type="button" class="word-tool-btn" data-cmd="superscript" title="Superscript">x<sup>2</sup></button>
+          <label class="word-color-wrap" title="Font Color">
+            <span class="word-color-lbl">A</span>
+            <input type="color" id="word-font-color" value="#1a1a2e">
+          </label>
+          <label class="word-color-wrap bg-wrap" title="Highlight Color">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M12 2l4 4-9 9H3v-4l9-9z"/></svg>
+            <input type="color" id="word-bg-color" value="#ffff00">
+          </label>
+          <button type="button" class="word-tool-btn" data-cmd="removeFormat" title="Clear Formatting">&#10006;</button>
+        </div>
+        <div class="word-grp-label">Font</div>
+      </div>
+      <div class="word-grp">
+        <div class="word-grp-row">
+          <button type="button" class="word-tool-btn" data-cmd="insertUnorderedList" title="Bulleted List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="insertOrderedList" title="Numbered List"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h2v-4"/><path d="M4 10h2a2 2 0 0 1 0 4H4"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="outdent" title="Decrease Indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="12" x2="11" y2="12"/><line x1="21" y1="6" x2="11" y2="6"/><line x1="21" y1="18" x2="11" y2="18"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="indent" title="Increase Indent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 16 11 12 7 8"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="18" x2="3" y2="18"/></svg></button>
+        </div>
+        <div class="word-grp-row">
+          <button type="button" class="word-tool-btn" data-cmd="justifyLeft" title="Align Left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="justifyCenter" title="Align Center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="justifyRight" title="Align Right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg></button>
+          <button type="button" class="word-tool-btn" data-cmd="justifyFull" title="Justify"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg></button>
+        </div>
+        <div class="word-grp-label">Paragraph</div>
+      </div>
+      <div class="word-grp word-grp-styles">
+        <div class="word-styles-bar">
+          <button type="button" class="word-style-chip" data-style="p"><span class="chip-h">Normal</span><span class="chip-s">Body Text</span></button>
+          <button type="button" class="word-style-chip" data-style="h1"><span class="chip-h" style="font-size:15px;font-weight:700">Heading 1</span><span class="chip-s">Major Section</span></button>
+          <button type="button" class="word-style-chip" data-style="h2"><span class="chip-h" style="font-size:13px;font-weight:700">Heading 2</span><span class="chip-s">Subsection</span></button>
+          <button type="button" class="word-style-chip" data-style="h3"><span class="chip-h" style="font-size:12px;font-weight:600">Heading 3</span><span class="chip-s">Subtopic</span></button>
+          <button type="button" class="word-style-chip" data-style="blockquote"><span class="chip-h" style="font-style:italic">Quote</span><span class="chip-s">Callout</span></button>
+          <button type="button" class="word-style-chip" data-style="pre"><span class="chip-h" style="font-family:monospace">Code</span><span class="chip-s">Monospace</span></button>
+        </div>
+        <div class="word-grp-label">Styles</div>
+      </div>
+    </div>
+    <div id="word-tab-insert" class="word-ribbon-panel">
+      <div class="word-grp">
+        <div class="word-grp-row">
+          <label class="word-tool-btn-labeled" title="Insert photo or image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Picture</span>
+            <input type="file" id="word-insert-img" accept="image/*" class="hide">
+          </label>
+          <button type="button" id="word-insert-tbl" class="word-tool-btn-labeled" title="Insert grid table">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+            <span>Table</span>
+          </button>
+          <button type="button" id="word-insert-hr" class="word-tool-btn-labeled" title="Insert divider line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="12" x2="22" y2="12" stroke-dasharray="2 2"/></svg>
+            <span>Line</span>
+          </button>
+          <button type="button" id="word-insert-link" class="word-tool-btn-labeled" title="Insert hyperlink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>Link</span>
+          </button>
+          <button type="button" id="word-insert-break" class="word-tool-btn-labeled" title="Insert new page sheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="8" rx="1"/><rect x="4" y="14" width="16" height="8" rx="1"/><line x1="2" y1="12" x2="22" y2="12" stroke-dasharray="3 3"/></svg>
+            <span>Page Break</span>
+          </button>
+        </div>
+        <div class="word-grp-label">Insert Tools</div>
+      </div>
+    </div>
+    <div id="word-tab-layout" class="word-ribbon-panel">
+      <div class="word-grp">
+        <div class="word-grp-row">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600">Orientation
+            <select id="word-layout-orient" class="word-select">
+              <option value="portrait" selected>Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600">Margins
+            <select id="word-layout-margins" class="word-select">
+              <option value="normal" selected>Normal (25mm)</option>
+              <option value="narrow">Narrow (12mm)</option>
+              <option value="wide">Wide (38mm)</option>
+            </select>
+          </label>
+        </div>
+        <div class="word-grp-label">Page Setup</div>
+      </div>
+    </div>
+  </div>
+  <div class="word-workspace" id="word-workspace">
+    <div class="word-pages-container" id="word-pages-container">
+      <div class="word-page" data-page="1">
+        <div class="word-page-header">
+          <span class="word-header-doc">Document 1</span>
+          <span class="word-header-page">Page 1</span>
+        </div>
+        <div class="word-page-content" contenteditable="true" spellcheck="true" placeholder="Start typing your document here...">
+          <h1>Document Title</h1>
+          <p>Start writing your text here. You can format with headings, bold, italic, colors, bullet points, tables, and insert images.</p>
+        </div>
+        <div class="word-page-footer">
+          <span>Folix - A FloppersBlop Product</span>
+          <span class="word-page-num">1</span>
+        </div>
+      </div>
+    </div>
+    <div class="word-page-controls">
+      <button type="button" id="word-add-page-btn" class="word-page-action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Page</button>
+      <button type="button" id="word-del-page-btn" class="word-page-action-btn del"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete Current Page</button>
+    </div>
+  </div>
+  <div class="word-statusbar">
+    <div class="word-sb-left">
+      <span id="word-stat-pages">Page 1 of 1</span>
+      <span class="word-sb-dot">&middot;</span>
+      <span id="word-stat-words">26 words</span>
+      <span class="word-sb-dot">&middot;</span>
+      <span id="word-stat-chars">158 characters</span>
+    </div>
+    <div class="word-sb-right">
+      <button type="button" id="word-zoom-out" class="word-zoom-btn" title="Zoom Out">&minus;</button>
+      <span id="word-zoom-lbl">100%</span>
+      <button type="button" id="word-zoom-in" class="word-zoom-btn" title="Zoom In">+</button>
+    </div>
+  </div>
+</dialog>
 <dialog id="ocrd" aria-labelledby="ocrt"><form id="ocrf" onsubmit="return false"><div class="dlg-hdr"><div class="dlg-title-wrap"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2M9 9h6v6H9z"/></svg><h2 id="ocrt">Text Recognition (OCR)</h2></div><button type="button" id="ocrx" class="dlg-x" aria-label="Close">&times;</button></div><p class="pts">Extract text from scanned pages using on-device Tesseract OCR.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><label style="display:grid;gap:4px;font-size:12px;font-weight:600">Language<select id="ocrlang" style="height:36px;border-radius:6px;padding:0 8px;border:1px solid var(--bd);background:var(--w);color:var(--ink)"><option value="ita">Italiano (Offline)</option><option value="eng">English (Offline)</option><option value="ita+eng">Italiano + English (Offline)</option><option value="spa">Español</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="por">Português</option><option value="rus">Русский</option><option value="chi_sim">中文 (Simplified)</option><option value="jpn">日本語</option><option value="ara">العربية</option></select></label><label style="display:grid;gap:4px;font-size:12px;font-weight:600">Page Scope<select id="ocrscope" style="height:36px;border-radius:6px;padding:0 8px;border:1px solid var(--bd);background:var(--w);color:var(--ink)"><option value="cur">Current Page</option><option value="all">All Pages</option></select></label></div><div class="row" style="margin-bottom:12px;gap:8px"><button type="button" id="ocrrun" class="pri" style="flex:1">Start Recognition</button><button type="button" id="ocrstop" class="hide" style="flex:1">Stop</button></div><div id="ocrprog" class="hide" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span id="ocrstat">Recognizing…</span><span id="ocrpct">0%</span></div><div style="height:6px;background:var(--paper);border-radius:3px;overflow:hidden"><div id="ocrbar" style="height:100%;width:0;background:var(--o);transition:width .2s"></div></div></div><div id="ocrres" class="hide" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="font-size:12px;font-weight:600">Extracted Text</label><span id="ocrwords" style="font-size:11px;opacity:.7"></span></div><textarea id="ocrtxt" rows="8" readonly style="width:100%;border-radius:6px;padding:10px;font:13px/1.4 var(--font-body);resize:vertical;border:1px solid var(--bd);background:var(--paper);color:var(--ink);box-sizing:border-box"></textarea><div class="ptbar" style="margin-top:10px;gap:6px;flex-wrap:wrap"><button type="button" id="ocrpdf" class="pri" title="Download PDF with embedded invisible text layer">Download Searchable PDF</button><button type="button" id="ocrtrans" title="Translate extracted text in the Translate tab">Translate text</button><button type="button" id="ocrcopy">Copy text</button><button type="button" id="ocrdown">Download .txt</button><button type="button" id="ocrspeak">Read aloud</button><button type="button" id="ocrinject" title="Make this scanned page selectable and searchable in the viewer">Make page searchable</button></div></div></form></dialog>
 <div id="ttsbar" class="hide" role="group" aria-label="Read aloud controls"><button id="ttsprev" type="button" aria-label="Previous sentence">&lsaquo;</button><button id="ttsplay" type="button">Pause</button><button id="ttsnext" type="button" aria-label="Next sentence">&rsaquo;</button><button id="ttsrate" type="button" aria-label="Reading speed">1&times;</button><select id="ttsv" aria-label="Voice"></select><button id="ttsstop" type="button">Stop</button></div>
 <div id="more" class="pop" aria-label="More tools"></div>
@@ -259,4 +493,4 @@
 <script src="lib/ocr/worker-bundle.js?v=2.6"></script>
 <script src="lib/ocr/lang/ita.js"></script>
 <script src="lib/ocr/lang/eng.js"></script>
-<script src="config.js"></script><script src="app.js?v=3.3"></script></body></html>
+<script src="config.js"></script><script src="app.js?v=3.3"></script><script src="create.js?v=1.2"></script></body></html>

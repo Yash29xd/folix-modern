@@ -1227,8 +1227,13 @@ sgd.addEventListener('close',()=>{if(tool==='sig'&&!sigImg)setTool('sig')});
 const hk=$('hk');
 [$('hkb'),$('hkb2')].forEach(b=>b&&(b.onclick=()=>{closePops();hk.showModal()}));$('hkx').onclick=()=>hk.close();
 document.addEventListener('keydown',e=>{
-  if(e.ctrlKey||e.metaKey||e.altKey)return;
   const t=document.activeElement,typing=t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='n'&&!typing){
+    e.preventDefault();
+    openCreatePdfDialog();
+    return;
+  }
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
   if(typing||document.querySelector('dialog[open]'))return;
   if(e.key==='?'){e.preventDefault();hk.showModal();return}
   if(!pdf)return;
@@ -1617,10 +1622,39 @@ function ptThumb(c){
     }catch(e){}
   });
 }
+let ptIsCreate=false;
 function ptOpen(){
-  if(!pdf)return;ptDocs=[{p:pdf,bytes:null}];ptCards=[];
+  if(!pdf)return;ptIsCreate=false;ptDocs=[{p:pdf,bytes:null}];ptCards=[];
   for(let i=0;i<pdf.numPages;i++)ptCards.push({d:0,i,rot:0,del:false,sel:false});
+  $('ptt').textContent='Page tools';
+  if($('ptdesc'))$('ptdesc').textContent='Drag pages to reorder. Rotate, delete or select pages, add pages from another PDF, then apply the changes or save a copy.';
+  $('ptapply').textContent='Apply to this document';
   $('pterr').textContent='';ptRender();modal(ptd);
+}
+async function ptOpenFromImages(files){
+  ptIsCreate=true;ptDocs=[];ptCards=[];
+  $('ptt').textContent='Create PDF from Images';
+  if($('ptdesc'))$('ptdesc').textContent='Drag images to reorder. Rotate or delete pages, add more images or PDF pages, then download or open in editor.';
+  $('ptapply').textContent='Open in Folix Editor';
+  $('pterr').textContent='';modal(ptd);
+  await ptAddImages(files);
+}
+async function ptAddImages(files){
+  if(!files||!files.length)return;
+  $('pterr').textContent='';
+  for(const f of files){
+    try{
+      const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
+      const im=new Image();
+      await new Promise((res,rej)=>{im.onload=res;im.onerror=rej;im.src=dataUrl});
+      const cv=document.createElement('canvas'),maxW=130,sc=maxW/im.naturalWidth;
+      cv.width=maxW;cv.height=Math.max(20,Math.round(im.naturalHeight*sc));
+      const ctx=cv.getContext('2d');ctx.drawImage(im,0,0,cv.width,cv.height);
+      const buf=await f.arrayBuffer();
+      ptCards.push({isImg:true,bytes:new Uint8Array(buf),mime:f.type||'image/png',w:im.naturalWidth,h:im.naturalHeight,cv,rot:0,del:false,sel:false,name:f.name});
+    }catch(x){$('pterr').textContent='Could not read image: '+f.name}
+  }
+  ptRender();
 }
 function ptRender(){
   const g=$('ptg');g.textContent='';
@@ -1682,7 +1716,7 @@ async function ptBuild(list){
       continue;
     }
     if(!src[c.d]){
-      const b=c.d===0?await ptBase():ptDocs[c.d].bytes;
+      const b=(c.d===0&&pdf)?await ptBase():ptDocs[c.d].bytes;
       try{src[c.d]=await PDFDocument.load(b)}catch(e){throw new Error(c.d?'Could not read an added PDF. Locked PDFs are not supported':'Locked PDFs cannot be edited')}
     }
     const pg=(await out.copyPages(src[c.d],[c.i]))[0];if(c.rot)pg.setRotation(degrees(((pg.getRotation().angle||0)+c.rot)%360));out.addPage(pg);
@@ -1690,9 +1724,23 @@ async function ptBuild(list){
   return await out.save();
 }
 const ptRun=async fn=>{$('pterr').textContent='';const bs=ptd.querySelectorAll('.ptrow button');bs.forEach(b=>b.disabled=true);try{await fn()}catch(e){$('pterr').textContent=e.message||'Something went wrong'}bs.forEach(b=>b.disabled=false)};
-$('ptapply').onclick=()=>ptRun(async()=>{const list=ptCards.filter(c=>!c.del);if(!list.length)throw new Error('Keep at least one page');const out=await ptBuild(list);ptd.close();await openData(new Uint8Array(out),baseName()+'-edited.pdf');msg('Changes applied. Use Download to save the new file')});
-$('ptsave').onclick=()=>ptRun(async()=>{const list=ptCards.filter(c=>!c.del);if(!list.length)throw new Error('Keep at least one page');downloadBytes(await ptBuild(list),baseName()+'-pages.pdf')});
-$('ptext').onclick=()=>ptRun(async()=>{const list=ptCards.filter(c=>c.sel&&!c.del);if(!list.length)throw new Error('Select the pages to extract first');downloadBytes(await ptBuild(list),baseName()+'-extract.pdf')});
+$('ptapply').onclick=()=>ptRun(async()=>{
+  const list=ptCards.filter(c=>!c.del);
+  if(!list.length)throw new Error('Keep at least one page');
+  const out=await ptBuild(list);
+  ptd.close();
+  const name=ptIsCreate?'created-images.pdf':(baseName()+'-edited.pdf');
+  await openData(new Uint8Array(out),name);
+  msg(ptIsCreate?'New PDF created! You can now annotate, sign, or edit.':'Changes applied. Use Download to save the new file');
+});
+$('ptsave').onclick=()=>ptRun(async()=>{
+  const list=ptCards.filter(c=>!c.del);
+  if(!list.length)throw new Error('Keep at least one page');
+  const name=ptIsCreate?'created-images.pdf':(baseName()+'-pages.pdf');
+  downloadBytes(await ptBuild(list),name);
+  msg('Downloaded PDF file');
+});
+$('ptext').onclick=()=>ptRun(async()=>{const list=ptCards.filter(c=>c.sel&&!c.del);if(!list.length)throw new Error('Select the pages to extract first');downloadBytes(await ptBuild(list),(ptIsCreate?'created-images':baseName())+'-extract.pdf')});
 $('ptx').onclick=()=>ptd.close();$('ptall').onclick=()=>{ptCards.forEach(c=>c.sel=true);ptRender()};$('ptnone').onclick=()=>{ptCards.forEach(c=>c.sel=false);ptRender()};
 $('ptadd').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
@@ -1701,20 +1749,7 @@ $('ptadd').onchange=async e=>{
 };
 $('ptaddimg').onchange=async e=>{
   const files=Array.from(e.target.files||[]);e.target.value='';if(!files.length)return;
-  $('pterr').textContent='';
-  for(const f of files){
-    try{
-      const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
-      const im=new Image();
-      await new Promise((res,rej)=>{im.onload=res;im.onerror=rej;im.src=dataUrl});
-      const cv=document.createElement('canvas'),maxW=130,sc=maxW/im.naturalWidth;
-      cv.width=maxW;cv.height=Math.max(20,Math.round(im.naturalHeight*sc));
-      const ctx=cv.getContext('2d');ctx.drawImage(im,0,0,cv.width,cv.height);
-      const buf=await f.arrayBuffer();
-      ptCards.push({isImg:true,bytes:new Uint8Array(buf),mime:f.type||'image/png',w:im.naturalWidth,h:im.naturalHeight,cv,rot:0,del:false,sel:false,name:f.name});
-    }catch(x){$('pterr').textContent='Could not read image: '+f.name}
-  }
-  ptRender();
+  await ptAddImages(files);
 };
 ptd.addEventListener('close',()=>{ptDocs.slice(1).forEach(x=>{try{x.p.destroy()}catch(e){}})});
 $('ptb').onclick=ptOpen;
@@ -2015,7 +2050,7 @@ async function trCanvases(forPdf=false){
   const mark=c=>{
     if(forPdf)return; // Handled natively in PDF with high-resolution original PNG
     c.save();c.textBaseline='middle';c.textAlign='right';c.font='700 36px '+EX.FONT;c.fillStyle='#ff6a00';
-    c.fillText('Folix',W-M,58);const w=c.measureText('Folix').width;
+    c.font='700 24px '+EX.FONT;c.fillText('Folix - A FloppersBlop Product',W-M,58);const w=c.measureText('Folix - A FloppersBlop Product').width;
     const is=44,ix=W-M-w-54,iy=36;
     if(folixLogoImg){
       try{c.drawImage(folixLogoImg,ix,iy,is,is)}catch(_){}
@@ -2087,14 +2122,14 @@ async function trExport(kind){
     const nm=baseName()+'-'+TL.tgt;
     if(forPdf){
       await ensurePdfLib();const {PDFDocument,StandardFonts,rgb}=window.PDFLib,doc=await PDFDocument.create();
-      doc.setTitle(baseName()+' ('+TLN(TL.tgt)+' translation)');doc.setCreator('Folix');doc.setProducer('Folix');
+      doc.setTitle(baseName()+' ('+TLN(TL.tgt)+' translation)');doc.setCreator('Folix - A FloppersBlop Product');doc.setProducer('Folix - A FloppersBlop Product');
       let logoImg=null;
       try{
         const r=await fetch('assets/icon-192.png');
         if(r.ok){const b=await r.arrayBuffer();logoImg=await doc.embedPng(new Uint8Array(b))}
       }catch(e){console.warn('Logo embed',e)}
       const boldFont=await doc.embedFont(StandardFonts.HelveticaBold);
-      const logoSize=22,textStr='Folix',textWidth=boldFont.widthOfTextAtSize(textStr,18),totalW=logoSize+6+textWidth;
+      const logoSize=20,textStr='Folix - A FloppersBlop Product',textWidth=boldFont.widthOfTextAtSize(textStr,13),totalW=logoSize+6+textWidth;
       const rightMargin=55.68,startX=595.28-rightMargin-totalW,topY=841.89-42;
 
       for(const c of cvs){
@@ -2105,7 +2140,7 @@ async function trExport(kind){
         if(logoImg){
           pg.drawImage(logoImg,{x:startX,y:topY-3,width:logoSize,height:logoSize});
         }
-        pg.drawText(textStr,{x:startX+logoSize+6,y:topY,size:18,font:boldFont,color:rgb(1,0.416,0)});
+        pg.drawText(textStr,{x:startX+logoSize+6,y:topY,size:13,font:boldFont,color:rgb(1,0.416,0)});
       }
       downloadAny(await doc.save(),nm+'.pdf','application/pdf');msg('Saved '+cvs.length+' page'+(cvs.length>1?'s':'')+' as PDF');
     }else if(cvs.length===1){
@@ -2807,6 +2842,7 @@ function closeDoc(){
 function handleMenuAction(action){
   switch(action){
     case 'open': if($('file'))$('file').click(); break;
+    case 'create-pdf': openCreatePdfDialog(); break;
     case 'dl': if(typeof download==='function')download(); else if($('dl'))$('dl').click(); break;
     case 'asave': if($('asave'))$('asave').click(); break;
     case 'png': if($('png'))$('png').click(); break;
@@ -2962,6 +2998,7 @@ function initDialogBackdropDismiss(){
   document.querySelectorAll('dialog').forEach(dlg=>{
     dlg.addEventListener('click',e=>{
       if(e.target===dlg){
+        if(dlg.id==='word-modal')return; // Prevent accidental document loss
         const r=dlg.getBoundingClientRect();
         const inside=r.top<=e.clientY&&e.clientY<=r.bottom&&r.left<=e.clientX&&e.clientX<=r.right;
         if(!inside){
@@ -2977,6 +3014,42 @@ function initDialogBackdropDismiss(){
     });
   });
 }
+
+// ============================================================================
+// SECTION 30: FOLIX CREATOR INTEROP & INITIALIZATION
+// ============================================================================
+
+function openCreatePdfDialog(){
+  if(window.FolixCreate && window.FolixCreate.openDialog){
+    window.FolixCreate.openDialog();
+  } else {
+    const dlg=$('created');
+    if(dlg)modal(dlg);
+  }
+}
+
+function openWordStudio(){
+  if(window.FolixCreate && window.FolixCreate.openWordStudio){
+    window.FolixCreate.openWordStudio();
+  } else {
+    const dlg=$('word-modal');
+    if(dlg)modal(dlg);
+  }
+}
+
+// Expose internal services to window.Folix for modular extensions like create.js
+window.Folix = Object.assign(window.Folix || {}, {
+  $,
+  modal,
+  msg,
+  openData,
+  downloadAny,
+  ensurePdfLib,
+  ptOpenFromImages,
+  ptAddImages,
+  openCreatePdfDialog,
+  openWordStudio
+});
 
 initTopMenus();
 initSidebarResize();

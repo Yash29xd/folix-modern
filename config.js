@@ -29,13 +29,13 @@
 /** @type {FolixConfig} */
 window.FOLIX_CONFIG = {
   /** Display name of the application used in title bars and headers */
-  name: 'Folix Modern PDF Viewer',
+  name: 'Folix - A FloppersBlop Product',
 
   /** Parent brand / publisher organization */
   owner: 'FloppersBlop',
 
   /** Application semantic version */
-  version: '1.1.0',
+  version: '1.2.0',
 
   /** Author and maintainer */
   author: 'Yash Arya',
@@ -53,7 +53,7 @@ window.FOLIX_CONFIG = {
   year: '2026',
 
   /** Display date of the latest documentation / legal update */
-  updated: '22 November 2026',
+  updated: '24 November 2026',
 
   /**
    * Path to the Mozilla PDF.js Web Worker script.

@@ -24,7 +24,7 @@
 
 /** Primary cache name containing application assets. Increment hash on file changes. */
 /** Ephemeral cache name used to transport shared files from Web Share Target to the client. */
-const CACHE='folix-modern-3.3',SHARE='folix-share';
+const CACHE='folix-modern-1.2.0',SHARE='folix-share';
 
 /**
  * Complete manifest of static assets pre-cached for offline availability.
@@ -94,6 +94,8 @@ const ASSETS=[
  "./config.js",
  "./contact.html",
  "./copyright.html",
+ "./create.css",
+ "./create.js",
  "./disclaimer.html",
  "./faq.html",
  "./index.html",
