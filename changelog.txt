@@ -1,0 +1,263 @@
+================================================================================
+FOLIX - A FLOPPERSBLOP PRODUCT - CHANGELOG & RELEASE NOTES
+================================================================================
+
+Current Version:    v1.2.0
+Previous Version:   v1.1.0
+Release Date:       24 November 2026
+Author:             Yash Arya
+Brand / Publisher:  FloppersBlop
+License:            MIT License
+Project URL:        https://yash29xd.github.io/folix-modern/
+Repository:         https://github.com/Yash29xd/folix-modern/
+
+
+================================================================================
+SUMMARY OF CHANGES IN VERSION 1.2.0
+================================================================================
+
+Version 1.2.0 transforms Folix from a PDF viewer and annotator into a complete
+creation and authoring suite, allowing users to create new PDF documents from
+scratch directly from the home screen using two powerful workflows:
+
+1. HOME SCREEN "CREATE PDF" LAUNCHER:
+   - Primary action button alongside "Open a PDF" in the home hero section.
+   - Added to the top "File" menu dropdown with Ctrl+N keyboard shortcut.
+   - Integrated into the mobile responsive navigation grid.
+   - Interactive modal chooser presenting two distinct creation options:
+     * "From Images (PNG, JPG, WebP)": Compile photo scans and graphics into a PDF.
+     * "From Text (MS Word Style)": Write formatted documents in a rich text word processor.
+
+2. CREATE PDF FROM IMAGES (PNG, JPG, WEBP):
+   - Standalone image-to-PDF compilation engine powered by Page Tools and pdf-lib.
+   - Direct multi-image device file picker launching right from the chooser.
+   - Instant proportional thumbnail generation with an "(Image)" identifier badge.
+   - Full drag-and-drop page reordering, step buttons (<- / ->), and 90° clockwise rotation.
+   - Non-destructive page deletion with instant restore.
+   - Option to append additional images or merge existing PDF documents.
+   - Direct "Download PDF" and "Open in Folix Editor" (transitioning straight into
+     the viewer for vector pen ink, annotations, highlights, text, and signatures).
+
+3. COMPLETE IN-BROWSER MS WORD-STYLE DOCUMENT STUDIO:
+   - Full-Screen Desktop Application Experience: Opens as a complete, 100vw x 100vh
+     application window with zero backdrop blur edges or floating popup margins.
+   - Full Microsoft Word Ribbon Toolbar with 3 specialized tabs:
+     * Home Tab:
+       - Undo / Redo actions.
+       - Font Family selector: Aptos (Default), Arial, Calibri, Georgia, Times New Roman,
+         Space Mono, Courier New, Trebuchet MS.
+       - Font Size dropdown: 10 pt to 32 pt.
+       - Character formatting: Bold (Ctrl+B), Italic (Ctrl+I), Underline (Ctrl+U),
+         Strikethrough, Subscript, Superscript.
+       - Color pickers: Font foreground color and text highlight background color.
+       - Paragraph alignment: Left, Center, Right, Justify.
+       - Lists: Bullet lists and numbered lists.
+       - Quick Styles Gallery: Normal body text, Heading 1, Heading 2, Heading 3,
+         Quote callout box, and Monospace Code block.
+     * Insert Tab:
+       - Picture insertion: Select and embed local device photos and images.
+       - Table generator: Interactive table prompt (customizable rows and columns)
+         with styled header rows and borders.
+       - Horizontal divider line insertion.
+       - Hyperlink tool.
+       - Page break insertion.
+     * Layout Tab:
+       - Page orientation switch: Portrait (595.28 x 841.89 pt) vs Landscape (841.89 x 595.28 pt).
+       - Margins selector: Normal (standard A4), Narrow, and Wide presets.
+   - Multi-Page A4 Sheet Canvas:
+     * True-to-scale A4 paper sheet simulation with running headers and footers.
+     * Dynamic document title synchronization across all page headers.
+     * Real-time live status bar showing current page, word count, character count,
+       and zoom level (60% to 150%).
+     * Visual "Add Page" and "Delete Current Page" management controls.
+   - High-Fidelity 2x Resolution PDF Baking:
+     * Rasterization engine generates crisp vector-grade PNG sheets at 2x device pixel ratio.
+     * Zero canvas-tainting: Local blob and data URLs ensure zero CORS security blocks.
+     * Direct pdf-lib multi-page assembly and compilation.
+     * One-click "Export PDF", "Open in Folix", and native browser vector "Print".
+
+4. UNIFIED SEARCH BAR CAPSULE IN TOP TOOLBAR:
+   - Redesigned search bar into a single unified pill capsule without nested inner boxes.
+   - Expanded search input width to 175px on desktop so the full placeholder
+     "Search in document…" is completely visible without truncation.
+   - Dynamically collapses the match counter badge when empty (#cnt:empty { display: none }),
+     eliminating phantom blank space gaps before the up/down match navigation arrows.
+
+5. STANDARDIZED FLOPPERSBLOP WATERMARKS & BRANDING:
+   - Standardized all document page footers, canvas watermarks, and PDF export metadata
+     strictly to "Folix - A FloppersBlop Product".
+
+6. CLEAN MODULAR CODEBASE ARCHITECTURE:
+   - Extracted all creation and Word Studio styles into dedicated v1.2/create.css.
+   - Extracted all creation controllers and export routines into dedicated v1.2/create.js.
+   - Streamlined v1.2/app.js to expose interoperability services via window.Folix.
+   - Updated v1.2/sw.js with bump to cache version "folix-modern-1.2.0".
+
+
+================================================================================
+DETAILED HIGHLIGHTS & NEW FEATURES IN V1.2.0
+================================================================================
+
+1. CREATE PDF CHOOSER & HERO INTEGRATION
+--------------------------------------------------------------------------------
+* Added prominent "Create PDF" hero button on the initial empty/home state alongside
+  the existing "Open a PDF" button.
+* Added "Create PDF…" to the File dropdown menu with keyboard shortcut Ctrl+N.
+* Created chooser dialog (#created) presenting two illustrated options:
+  - "From Images (PNG, JPG, WebP)": Compile photo scans and graphic images into a PDF.
+  - "From Text (MS Word Style)": Write formatted documents in a rich text word processor.
+* Overridden all global button height constraints to ensure spacious cards with
+  comfortable padding, icons, titles, and descriptions that never overlap or clip.
+
+
+2. STANDALONE IMAGE-TO-PDF STUDIO (PAGE TOOLS ENGINE)
+--------------------------------------------------------------------------------
+* Extended Page Tools to operate independently without requiring an active open PDF.
+* Multi-image file picker allows selecting any number of PNG, JPG, or WebP files.
+* Automatically creates thumbnail cards for every image with proper aspect ratios.
+* Full page manipulation capabilities:
+  - Reorder pages via drag-and-drop or step buttons (<- and ->).
+  - Rotate individual pages clockwise in 90-degree increments.
+  - Delete individual pages with an instant "Restore" button.
+  - Add more images via "Add image as page" or merge pages from an existing PDF.
+* Output options:
+  - "Save a copy" / "Download PDF": Generates and downloads the compiled PDF file.
+  - "Open in Folix Editor": Bakes the images into a fresh PDF and opens it
+    immediately in the viewer for annotating, highlighting, and signing.
+
+
+3. FULL-WINDOW MS WORD-STYLE DOCUMENT STUDIO
+--------------------------------------------------------------------------------
+* Full-Screen Window Layout:
+  - Fixed full viewport takeover (100vw x 100vh) providing an immersive,
+    distraction-free document writing environment.
+  - Completely removed floating modal card borders and backdrop blur edges.
+  - Responsive titlebar with document name input, application badge, and a dedicated
+    "Close ✕" button that safely returns the user to the viewer.
+* Microsoft Word Ribbon Bar:
+  - Tabbed interface with "Home", "Insert", and "Layout" ribbon panels.
+  - Smooth horizontal scrolling on mobile and tablet devices.
+  - Complete suite of rich-text formatting tools executing native formatting commands.
+  - Custom font family selector with 8 standard typographies.
+  - Heading and paragraph styles gallery chips (Normal, Heading 1, 2, 3, Quote, Code).
+  - Table insertion tool with configurable rows and columns.
+  - Image insertion tool embedding local photos directly into document pages.
+  - Page orientation switch (Portrait vs Landscape) and margin presets.
+* Multi-Page A4 Sheet Canvas:
+  - Centered gray workspace desk simulating physical A4 sheets (595.28 x 841.89 pt).
+  - Running headers displaying document title and page number.
+  - Running footers displaying "Folix - A FloppersBlop Product" and page count.
+  - Real-time word count and character count listeners in the status bar.
+  - Zoom controls allowing 60% to 150% magnification.
+  - Dynamic "Add Page" and "Delete Current Page" actions.
+* High-Fidelity PDF Export:
+  - 2x resolution rasterization preserves text crispness, table borders, and image details.
+  - Bakes multi-page document into standard PDF via pdf-lib.
+  - Sets Creator and Producer metadata to "Folix - A FloppersBlop Product".
+  - "Open in Folix" option opens the generated document directly in the Folix viewer.
+  - Vector printing supported via native browser window.print() and @media print rules.
+
+
+4. UNIFIED SEARCH BAR CAPSULE IN TOP TOOLBAR
+--------------------------------------------------------------------------------
+* Unified the search container (#g-search) so it functions as a single clean capsule.
+* Removed the nested inner border and white box around the search input.
+* Extended input width to 175px on desktop so the placeholder text "Search in document…"
+  is displayed in full without being cut off.
+* Fixed empty search badge issue: When there are no search results, #cnt is hidden
+  (#cnt:empty { display: none !important; min-width: 0 !important; }), removing the
+  phantom blank gap before the up/down navigation arrows.
+
+
+5. STANDARDIZED FLOPPERSBLOP WATERMARKS & BRANDING
+--------------------------------------------------------------------------------
+* Replaced all previous generic or legacy watermark references ("Folix Modern", "Folix")
+  with the official standardized branding: "Folix - A FloppersBlop Product".
+* Updated A4 document footers in HTML and dynamic page creation templates.
+* Updated canvas rasterization routines for Word Studio PDF export.
+* Updated translation PDF and image canvas watermarks.
+* Updated global configuration name in config.js to "Folix - A FloppersBlop Product".
+
+
+================================================================================
+FILES MODIFIED & CREATED IN V1.2.0 (RELATIVE TO V1.1.0)
+================================================================================
+
+* v1.2/create.css (NEW):
+  - Dedicated creator stylesheet holding all styles for the hero launcher,
+    chooser dialog (#created), options cards (.create-card), Word Studio (#word-modal),
+    ribbon tabs, A4 page sheets, status bar, dark mode, and mobile media queries.
+
+* v1.2/create.js (NEW):
+  - Dedicated creator JavaScript module managing the Word Studio runtime,
+    rich text formatting execution, table/image insertion, page adding/deleting,
+    real-time statistics, canvas rasterization, pdf-lib compilation, and chooser events.
+
+* v1.2/index.html:
+  - Linked create.css and create.js.
+  - Added "Create PDF" hero action button (#btn-create-pdf).
+  - Added "Create PDF…" to File menu with Ctrl+N shortcut.
+  - Added Create PDF chooser dialog (#created) with image and text options.
+  - Added multi-image hidden file input (#create-img-input).
+  - Added MS Word Document Studio dialog (#word-modal) markup with ribbon,
+    initial A4 page sheet, controls, and status bar.
+  - Standardized initial page footer to "Folix - A FloppersBlop Product".
+
+* v1.2/app.js:
+  - Refactored creation methods to delegate cleanly to window.FolixCreate.
+  - Exposed core services ($, modal, msg, openData, downloadAny, ensurePdfLib,
+    ptOpenFromImages, ptAddImages) via window.Folix.
+  - Updated translation export watermarks to "Folix - A FloppersBlop Product".
+
+* v1.2/styles.css:
+  - Restored clean core viewer styles.
+  - Redesigned #g-search capsule to eliminate nested borders and expand input width.
+  - Added #cnt:empty { display: none !important; } to eliminate phantom blank gaps.
+
+* v1.2/config.js:
+  - Updated application name to "Folix - A FloppersBlop Product".
+  - Bumped version to 1.2.0.
+
+* v1.2/sw.js:
+  - Added create.css and create.js to pre-cache asset manifest.
+  - Bumped cache store name to "folix-modern-1.2.0".
+
+* PR/changelog.txt:
+  - Updated with comprehensive v1.2.0 release documentation.
+
+* PR/changelog-v1.2.txt (NEW):
+  - Dedicated v1.2.0 standalone release notes for GitHub Releases.
+
+
+================================================================================
+SUMMARY OF CHANGES IN VERSION 1.1.0
+================================================================================
+
+Version 1.1.0 introduced two major capabilities:
+1. Multi-format Image-to-Page import in Page Tools (Add PNG, JPG, WebP as pages).
+2. Complete interactive transformation studio for Signatures and Text annotations
+   (move, corner resize, 360-degree rotation, and tap-outside-to-lock).
+
+
+================================================================================
+INSTRUCTIONS FOR GITHUB UPDATE
+================================================================================
+
+To publish version 1.2.0 to your GitHub repository:
+1. Open your repository on GitHub (https://github.com/Yash29xd/folix-modern).
+2. Upload the updated files located inside the "v1.2" folder directly to your
+   repository root:
+   - index.html
+   - app.js
+   - create.js
+   - styles.css
+   - create.css
+   - config.js
+   - sw.js
+3. Upload the updated "PR" folder containing this changelog.
+4. On GitHub, draft a new Release for tag "v1.2.0" and paste the contents of
+   PR/changelog-v1.2.txt into the release description.
+
+================================================================================
+END OF CHANGELOG - FOLIX - A FLOPPERSBLOP PRODUCT V1.2.0
+================================================================================
