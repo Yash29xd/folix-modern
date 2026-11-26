@@ -1,6 +1,6 @@
 {
- "name": "Folix PDF Viewer",
- "short_name": "Folix",
+ "name": "Folix - A FloppersBlop Product",
+ "short_name": "Folix - A FloppersBlop Product",
  "description": "Private, fast PDF viewer that runs in your browser.",
  "id": "./",
  "start_url": "./index.html",

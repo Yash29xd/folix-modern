@@ -24,7 +24,7 @@
 
 /** Primary cache name containing application assets. Increment hash on file changes. */
 /** Ephemeral cache name used to transport shared files from Web Share Target to the client. */
-const CACHE='folix-modern-1.2.0',SHARE='folix-share';
+const CACHE='folix-modern-1.3.8',SHARE='folix-share';
 
 /**
  * Complete manifest of static assets pre-cached for offline availability.
@@ -34,6 +34,7 @@ const CACHE='folix-modern-1.2.0',SHARE='folix-share';
 const ASSETS=[
  "./",
  "./about.html",
+ "./architecture.html",
  "./app.js",
  "./assets/apple-touch-icon.png",
  "./assets/branding.png",
@@ -100,6 +101,7 @@ const ASSETS=[
  "./faq.html",
  "./index.html",
  "./lib/pdf-lib.min.js",
+ "./lib/pdf-encrypt.min.js",
  "./lib/pdf.min.js",
  "./lib/pdf.worker.min.js",
  "./lib/ocr/tesseract.min.js",
@@ -111,7 +113,8 @@ const ASSETS=[
  "./privacy.html",
  "./site.webmanifest",
  "./styles.css",
- "./terms.html"
+ "./terms.html",
+ "./ui-fx.js"
 ];
 
 /**

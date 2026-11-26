@@ -1,6 +1,6 @@
 /**
  * @file app.js
- * @description Core runtime engine and UI controller for Folix PDF Viewer.
+ * @description Core runtime engine and UI controller for Folix - A FloppersBlop Product.
  *
  * Architecture Overview:
  * - Single-Page Zero-Dependency Architecture:
@@ -240,6 +240,41 @@ const ctrls=['prev','next','pg','zo','zi','fit','fith','rot','two','spotb','sb',
  */
 const msg=t=>{const m=$('msg');m.textContent=t;m.style.display=t?'block':'none';if(t)setTimeout(()=>m.style.display='none',2500)};
 
+const BASE_DOC_TITLE='Folix - A FloppersBlop Product';
+let _routeFromPop=false;
+function formatRouteHash(kind,label){
+  if(!kind||kind==='home')return '';
+  const clean=String(label||'').trim();
+  return clean?'#/'+kind+'/'+encodeURIComponent(clean):'#/'+kind;
+}
+function parseRouteHash(h=location.hash){
+  const m=String(h||'').match(/^#\/([a-z0-9-]+)(?:\/(.+))?$/i);
+  if(!m)return {kind:'home',label:''};
+  let label='';
+  if(m[2]){try{label=decodeURIComponent(m[2])}catch(e){label=m[2]}}
+  return {kind:m[1].toLowerCase(),label};
+}
+function syncRoute(kind,label,{push=false}={}){
+  if(_routeFromPop)return;
+  const nextHash=formatRouteHash(kind,label);
+  const keepSearch=(kind==='home'||!location.search||/[?&]shared=1/.test(location.search))?'':location.search;
+  const nextUrl=location.pathname+keepSearch+nextHash;
+  if(location.hash===nextHash&&location.search===keepSearch)return;
+  try{
+    if(push)history.pushState({folixKind:kind,label:label||''},'',nextUrl);
+    else history.replaceState({folixKind:kind,label:label||''},'',nextUrl);
+  }catch(e){}
+}
+function restoreIdleRoute(opts){
+  if(pdf&&name){
+    document.title=name+' – Folix';
+    syncRoute('pdf',name,opts);
+  }else{
+    document.title=BASE_DOC_TITLE;
+    syncRoute('home','',opts);
+  }
+}
+
 /**
  * Primary document ingestion entry point.
  * Destroys existing PDF resources, clears page containers, prompts for passwords if encrypted,
@@ -264,6 +299,7 @@ async function openData(data,fname){
     ctrls.forEach(c=>$(c).disabled=false);
     $('pg').max=pdf.numPages;$('tot').textContent='/ '+pdf.numPages;
     document.title=name+' – Folix';
+    syncRoute('pdf',name,{push:true});
     rot=0;fitDefault(true);build();initSide();initAnn();initSpot();msg('');restoreLast();recentAdd();trLoad();
   }catch(e){
     const was=pwCancelled;pwCancelled=false;
@@ -445,7 +481,7 @@ function runText(){
     const j=tlq.shift();if(!j){tlRun=false;return}
     if(live(j)&&!j.d.querySelector('.textLayer')){
       try{
-        const tl=document.createElement('div');tl.className='textLayer';tl._s=j.vp.scale;tl._divs=[];tl.style.setProperty('--scale-factor',scale);
+        const tl=document.createElement('div');tl.className='textLayer';tl._s=j.vp.scale;tl._divs=[];tl.style.setProperty('--scale-factor',j.vp.scale);
         const tc=await j.page.getTextContent();
         if(live(j)){
           j.d.insertBefore(tl,j.d._svg||null);
@@ -464,16 +500,12 @@ function runText(){
               span.style.fontSize = Math.max(8, (w.bbox.y1 - w.bbox.y0) * s) + 'px';
               tl.appendChild(span);
             }
-          } else {
-            for(let i=0;i<its.length;i+=100){
-              if(!live(j))break;
-              await lib.renderTextLayer({textContentSource:{items:its.slice(i,i+100),styles:tc.styles},container:tl,viewport:j.vp,textDivs:tl._divs}).promise;
-              if(i+100<its.length)await new Promise(z=>idle(z));
-            }
+          } else if(its.length) {
+            await lib.renderTextLayer({textContentSource:j.page.streamTextContent(),container:tl,viewport:j.vp,textDivs:tl._divs}).promise;
           }
           tl._done=true;mark(j.d);
         }
-      }catch(e){}
+      }catch(e){console.warn('text layer',e)}
     }
     if(live(j)&&!j.d.querySelector('.annotationLayer')&&!j.d._noAnn){
       try{
@@ -727,7 +759,7 @@ function initSide(){
  */
 const NS=(n,a)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);return e};
 let ann={},fp=null,tool=null,col='#ff3b30',wid=4,picked=false,toasted=false;
-const hist=[],redoS=[],defC={pen:'#ff3b30',mk:'#ffd60a',hl:'#ffd60a',note:'#ffd60a',tx:'#0a0a0a'};
+const hist=[],redoS=[],defC={pen:'#ff3b30',mk:'#ffd60a',hl:'#ffd60a',note:'#ffd60a',tx:'#0a0a0a',redact:'#0a0a0a','snip-ocr':'#00d2ff'};
 function modal(d){d.showModal()}
 const MAT=['',' ','',' '];
 /**
@@ -769,6 +801,62 @@ function annAttach(d,vp){
   const nl=document.createElement('div');nl.className='nl';d.appendChild(nl);d._nl=nl;
   svg.addEventListener('pointerdown',e=>{
     const pi=+d.dataset.n-1;
+  if (tool === 'snip-ocr') {
+    e.preventDefault();
+    const p0 = pt(e);
+    const rectEl = NS('rect', { fill: 'rgba(0, 210, 255, 0.2)', stroke: '#00d2ff', 'stroke-width': 2, 'stroke-dasharray': '5 3' });
+    d._g.appendChild(rectEl);
+    svg.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      const p = pt(ev);
+      const x = Math.min(p0[0], p[0]), y = Math.min(p0[1], p[1]), w = Math.abs(p[0] - p0[0]), h = Math.abs(p[1] - p0[1]);
+      rectEl.setAttribute('x', x); rectEl.setAttribute('y', y);
+      rectEl.setAttribute('width', w); rectEl.setAttribute('height', h);
+    };
+    const up = ev => {
+      svg.removeEventListener('pointermove', mv);
+      svg.removeEventListener('pointerup', up);
+      svg.removeEventListener('pointercancel', up);
+      rectEl.remove();
+      const p = pt(ev);
+      const x = Math.min(p0[0], p[0]), y = Math.min(p0[1], p[1]), w = Math.abs(p[0] - p0[0]), h = Math.abs(p[1] - p0[1]);
+      if (w > 8 && h > 8) {
+        executeSnipOcr(d, pi, x, y, w, h);
+      }
+    };
+    svg.addEventListener('pointermove', mv);
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', up);
+    return;
+  }
+  if (tool === 'redact') {
+    e.preventDefault();
+    const p0 = pt(e);
+    const rectEl = NS('rect', { fill: 'rgba(18,18,22,0.85)', stroke: '#e81123', 'stroke-width': 2, 'stroke-dasharray': '4 3' });
+    d._g.appendChild(rectEl);
+    svg.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      const p = pt(ev);
+      const x = Math.min(p0[0], p[0]), y = Math.min(p0[1], p[1]), w = Math.abs(p[0] - p0[0]), h = Math.abs(p[1] - p0[1]);
+      rectEl.setAttribute('x', x); rectEl.setAttribute('y', y);
+      rectEl.setAttribute('width', w); rectEl.setAttribute('height', h);
+    };
+    const up = ev => {
+      svg.removeEventListener('pointermove', mv);
+      svg.removeEventListener('pointerup', up);
+      svg.removeEventListener('pointercancel', up);
+      rectEl.remove();
+      const p = pt(ev);
+      const x = Math.min(p0[0], p[0]), y = Math.min(p0[1], p[1]), w = Math.abs(p[0] - p0[0]), h = Math.abs(p[1] - p0[1]);
+      if (w > 4 && h > 4) {
+        addAnn(pi, { t: 'redact', x, y, w, h });
+      }
+    };
+    svg.addEventListener('pointermove', mv);
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', up);
+    return;
+  }
     if(tool==='er'){const t=e.target.closest&&e.target.closest('[data-i]');if(t){e.preventDefault();delAnn(pi,(ann[pi]||[])[+t.dataset.i])}return}
     drawStart(e,d);
   });
@@ -907,6 +995,25 @@ function annDraw(d){
       const tx=document.createElement('span');tx.className='ntx';tx.textContent=a.s;b.appendChild(tx);
       b.onclick=e=>{e.stopPropagation();if(tool==='er')delAnn(pi,a);else b.classList.toggle('open')};
       d._nl.appendChild(b);
+    } else if (a.t === 'redact') {
+      const grp = NS('g', { class: 'ann-redact', 'data-i': i });
+      const rect = NS('rect', { class: 'ann-redact-rect', x: a.x, y: a.y, width: a.w, height: a.h });
+      rect.onclick = e => {
+        e.stopPropagation();
+        if (tool === 'er') {
+          delAnn(pi, a);
+          if (typeof syncRedactBar === 'function') syncRedactBar();
+        }
+      };
+      grp.appendChild(rect);
+      if (a.w >= 24 && a.h >= 10) {
+        const tw = Math.min(46, a.w), th = Math.min(12, a.h);
+        grp.appendChild(NS('rect', { class: 'ann-redact-tag-bg', x: a.x, y: a.y, width: tw, height: th }));
+        const txt = NS('text', { class: 'ann-redact-tag', x: a.x + 2, y: a.y + th - 2.5 });
+        txt.textContent = 'REDACT';
+        grp.appendChild(txt);
+      }
+      g.appendChild(grp);
     }
   });
 }
@@ -918,7 +1025,7 @@ function annDraw(d){
  * @param {HTMLElement} d - Target page container element.
  */
 function drawStart(e,d){
-  if(!['pen','mk','note','tx','sig'].includes(tool))return;
+  if(!['pen','mk','note','tx','sig','redact'].includes(tool))return;
   if((tool==='tx'||tool==='sig')&&rot!==0){e.preventDefault();return msg('Rotate the page back to 0° first')}
   e.preventDefault();const svg=d._svg;
   const pt=ev=>{const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;return inv(d,(ev.clientX-r.left)*vb.width/r.width,(ev.clientY-r.top)*vb.height/r.height)};
@@ -961,6 +1068,7 @@ function changed(pi){
   const d=pagesEl.children[pi];if(d&&d._done)annDraw(d);renderNotes();
   $('undo').disabled=!hist.length;$('redo').disabled=!redoS.length;
   if(!toasted){toasted=true;msg('Annotations are saved in this browser')}
+  if (typeof syncRedactBar === 'function') syncRedactBar();
   clearTimeout(sv);sv=setTimeout(()=>{if(!fp)return;try{Object.values(ann).some(l=>l&&l.length)?localStorage.setItem('folix.ann.'+fp,JSON.stringify(ann)):localStorage.removeItem('folix.ann.'+fp)}catch(e){msg('Could not save: browser storage is full')}},300);
 }
 function initAnn(){
@@ -1009,12 +1117,20 @@ function applyHl(){
     });
   });
   const ks=Object.keys(by);if(!ks.length)return;
-  const stxt=sel.toString().replace(/\s+/g,' ').trim().slice(0,90);ks.forEach(k=>addAnn(+k,{t:'hl',c:col,r:by[k],txt:stxt}));sel.removeAllRanges();
+  if (tool === 'redact') {
+    ks.forEach(k => {
+      (by[k] || []).forEach(r => addAnn(+k, { t: 'redact', x: r[0], y: r[1], w: r[2], h: r[3] }));
+    });
+  } else {
+    const stxt=sel.toString().replace(/\s+/g,' ').trim().slice(0,90);
+    ks.forEach(k=>addAnn(+k,{t:'hl',c:col,r:by[k],txt:stxt}));
+  }
+  sel.removeAllRanges();
 }
 let lastPT='mouse',hlT;
 main.addEventListener('pointerdown',e=>{lastPT=e.pointerType},{passive:true});
-main.addEventListener('pointerup',e=>{if(tool==='hl'&&e.pointerType!=='touch')setTimeout(applyHl,30)});
-document.addEventListener('selectionchange',()=>{if(tool==='hl'&&lastPT==='touch'){clearTimeout(hlT);hlT=setTimeout(applyHl,700)}});
+main.addEventListener('pointerup',e=>{if((tool==='hl'||tool==='redact')&&e.pointerType!=='touch')setTimeout(applyHl,30)});
+document.addEventListener('selectionchange',()=>{if((tool==='hl'||tool==='redact')&&lastPT==='touch'){clearTimeout(hlT);hlT=setTimeout(applyHl,700)}});
 document.addEventListener('keydown',e=>{
   if(!pdf)return;
   if(e.key==='Escape'&&tool&&!document.querySelector('dialog[open]'))return setTool(tool);
@@ -1041,6 +1157,17 @@ const hasAnn=()=>Object.values(ann).some(l=>l&&l.length);
  * @returns {Promise<void>}
  */
 async function ensurePdfLib(){if(!window.PDFLib)await new Promise((ok,no)=>{const s=document.createElement('script');s.src=C.pdfLibSrc;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+async function ensurePdfEncrypt(){
+  await ensurePdfLib();
+  if(!window.PDFEncryptLite){
+    await new Promise((ok,no)=>{
+      const s=document.createElement('script');
+      s.src=C.pdfEncryptSrc||'lib/pdf-encrypt.min.js';
+      s.onload=ok;s.onerror=no;
+      document.head.appendChild(s);
+    });
+  }
+}
 const formDirty=()=>!!(pdf&&pdf.annotationStorage&&pdf.annotationStorage.size>0);
 async function formBytes(){if(formDirty()){try{return await pdf.saveDocument()}catch(e){console.error(e)}}return bytes}
 async function outputBytes(){
@@ -1076,6 +1203,9 @@ async function buildAnnotated(base){
           pg.drawRectangle({x:p[0],y:p[1]-14,width:14,height:14,color:c,borderColor:rgb(.04,.04,.04),borderWidth:1.5});
           pg.drawRectangle({x:p[0]+18,y:p[1]-bh+2,width:166,height:bh,color:rgb(1,1,1),borderColor:rgb(.04,.04,.04),borderWidth:1.5});
           lines.forEach((ln,i)=>pg.drawText(ln,{x:p[0]+24,y:p[1]-9-i*11,size:9,font,color:rgb(.04,.04,.04)}));
+        }else if(a.t==='redact'){
+          const p1=P(a.x,a.y),p2=P(a.x+a.w,a.y+a.h);
+          pg.drawRectangle({x:Math.min(p1[0],p2[0]),y:Math.min(p1[1],p2[1]),width:Math.abs(p1[0]-p2[0]),height:Math.abs(p1[1]-p2[1]),color:rgb(0,0,0),opacity:1,borderWidth:0});
         }
       }
     }
@@ -1227,10 +1357,62 @@ sgd.addEventListener('close',()=>{if(tool==='sig'&&!sigImg)setTool('sig')});
 const hk=$('hk');
 [$('hkb'),$('hkb2')].forEach(b=>b&&(b.onclick=()=>{closePops();hk.showModal()}));$('hkx').onclick=()=>hk.close();
 document.addEventListener('keydown',e=>{
+  if(typeof isPresentation!=='undefined'&&isPresentation){
+    if(e.key==='Escape'||e.key==='F5'){
+      e.preventDefault();
+      exitPresentation();
+      return;
+    }
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){
+      e.preventDefault();
+      if(pdf&&cur<pdf.numPages){go(cur+1);updatePresentationHUD();fitPresentationSlide();}
+      return;
+    }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){
+      e.preventDefault();
+      if(cur>1){go(cur-1);updatePresentationHUD();fitPresentationSlide();}
+      return;
+    }
+    if(e.key.toLowerCase()==='l'){
+      e.preventDefault();
+      toggleLaser();
+      return;
+    }
+    if(e.key==='Home'){
+      e.preventDefault();
+      go(1);updatePresentationHUD();fitPresentationSlide();
+      return;
+    }
+    if(e.key==='End'){
+      e.preventDefault();
+      if(pdf){go(pdf.numPages);updatePresentationHUD();fitPresentationSlide();}
+      return;
+    }
+  }
   const t=document.activeElement,typing=t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){
+    e.preventDefault();
+    openCommandPalette();
+    return;
+  }
+  if(e.key==='F5'&&!typing){
+    e.preventDefault();
+    togglePresentation();
+    return;
+  }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='n'&&!typing){
     e.preventDefault();
     openCreatePdfDialog();
+    return;
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'&&!typing){
+    e.preventDefault();
+    openDocProps();
+    return;
+  }
+  if(e.shiftKey&&e.key.toLowerCase()==='r'&&!typing){
+    e.preventDefault();
+    openRedactDialogOrTool();
     return;
   }
   if(e.ctrlKey||e.metaKey||e.altKey)return;
@@ -1388,20 +1570,116 @@ $('cnt').onclick=()=>{setSidebar(true,true);setTab('search')};
 /**
  * Renders the chronological list of all document annotations into the Notes tab.
  */
-const annLabel=a=>a.t==='ink'?(a.a<1?'Marker':'Drawing'):a.t==='hl'?'Highlight':a.t==='text'?'Text':a.t==='note'?'Note':'Signature';
-const annPreview=a=>a.t==='hl'?(a.txt||''):(a.t==='text'||a.t==='note')?(a.s||''):'';
+const annLabel=a=>a.t==='ink'?(a.a<1?'Marker':'Drawing'):a.t==='hl'?'Highlight':a.t==='text'?'Text':a.t==='note'?'Note':a.t==='redact'?'Redaction':'Signature';
+const annPreview=a=>a.t==='hl'?(a.txt||''):(a.t==='text'||a.t==='note')?(a.s||''):a.t==='redact'?`Confidential Area [${Math.round(a.w)}×${Math.round(a.h)}]`:'';
 const annPoint=a=>a.t==='ink'?a.p[0]:a.t==='hl'?[a.r[0][0],a.r[0][1]]:[a.x,a.y];
+
+let currentAnnFilter = 'all';
+
+function setAnnFilter(filter){
+  currentAnnFilter = filter;
+  document.querySelectorAll('.ann-pill').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.filter === filter);
+  });
+  renderNotes();
+}
+
+function getAnnBadgeClass(t){
+  if(t === 'note') return 'badge-note';
+  if(t === 'hl') return 'badge-hl';
+  if(t === 'redact') return 'badge-redact';
+  if(t === 'text') return 'badge-text';
+  if(t === 'sig') return 'badge-sig';
+  return 'badge-ink';
+}
+
 function renderNotes(){
-  const box=$('notes');box.textContent='';
-  const pages=Object.keys(ann).filter(k=>ann[k]&&ann[k].length).map(Number).sort((a,b)=>a-b);
-  if(!pages.length){const p=document.createElement('p');p.className='none';p.textContent='NO ANNOTATIONS YET';box.appendChild(p);return}
-  pages.forEach(pi=>ann[pi].forEach(a=>{
-    const row=document.createElement('div');row.className='nl2';
-    const j2=document.createElement('button');j2.className='nj';const b=document.createElement('b');b.textContent='p.'+(pi+1)+' '+annLabel(a);j2.appendChild(b);j2.append(document.createTextNode(annPreview(a).slice(0,80)));
-    j2.onclick=()=>jumpAnn(pi,a);
-    const x=document.createElement('button');x.className='nd';x.textContent='×';x.setAttribute('aria-label','Delete annotation');x.onclick=()=>delAnn(pi,a);
-    row.append(j2,x);box.appendChild(row);
-  }));
+  const box = $('notes-content') || $('notes');
+  if(!box) return;
+  box.innerHTML = '';
+
+  const pages = Object.keys(ann).filter(k => ann[k] && ann[k].length).map(Number).sort((a,b) => a - b);
+  
+  let countAll = 0, countNotes = 0, countHl = 0, countRedact = 0;
+  pages.forEach(pi => {
+    (ann[pi] || []).forEach(a => {
+      countAll++;
+      if(a.t === 'note') countNotes++;
+      else if(a.t === 'hl') countHl++;
+      else if(a.t === 'redact') countRedact++;
+    });
+  });
+
+  if($('ann-cnt-all')) $('ann-cnt-all').textContent = countAll;
+  if($('ann-cnt-notes')) $('ann-cnt-notes').textContent = countNotes;
+  if($('ann-cnt-hl')) $('ann-cnt-hl').textContent = countHl;
+  if($('ann-cnt-redact')) $('ann-cnt-redact').textContent = countRedact;
+
+  if(!countAll){
+    const p = document.createElement('p');
+    p.className = 'none';
+    p.textContent = 'NO ANNOTATIONS YET';
+    box.appendChild(p);
+    return;
+  }
+
+  let matched = 0;
+  pages.forEach(pi => {
+    (ann[pi] || []).forEach(a => {
+      if(currentAnnFilter !== 'all' && a.t !== currentAnnFilter) return;
+      matched++;
+
+      const item = document.createElement('div');
+      item.className = 'ann-card-item';
+
+      const jumpBtn = document.createElement('button');
+      jumpBtn.type = 'button';
+      jumpBtn.className = 'ann-card-jump';
+      jumpBtn.title = 'Jump to annotation on page ' + (pi + 1);
+      jumpBtn.onclick = () => jumpAnn(pi, a);
+
+      const meta = document.createElement('div');
+      meta.className = 'ann-card-meta';
+      
+      const pgBadge = document.createElement('span');
+      pgBadge.className = 'ann-pg-badge';
+      pgBadge.textContent = 'p. ' + (pi + 1);
+      
+      const typeBadge = document.createElement('span');
+      typeBadge.className = 'ann-type-badge ' + getAnnBadgeClass(a.t);
+      typeBadge.textContent = annLabel(a);
+      
+      meta.append(pgBadge, typeBadge);
+
+      const body = document.createElement('div');
+      body.className = 'ann-card-body';
+      const prev = annPreview(a);
+      body.textContent = prev ? (prev.length > 120 ? prev.slice(0, 120) + '…' : prev) : (annLabel(a) + ' placed on page ' + (pi + 1));
+
+      jumpBtn.append(meta, body);
+
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'ann-card-del';
+      delBtn.innerHTML = '&times;';
+      delBtn.setAttribute('aria-label', 'Delete annotation');
+      delBtn.title = 'Delete this annotation';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        delAnn(pi, a);
+      };
+
+      item.append(jumpBtn, delBtn);
+      box.appendChild(item);
+    });
+  });
+
+  if(!matched){
+    const p = document.createElement('p');
+    p.className = 'none';
+    p.textContent = 'NO ' + currentAnnFilter.toUpperCase() + ' ANNOTATIONS FOUND';
+    box.appendChild(p);
+  }
 }
 function jumpAnn(pi,a){
   go(pi+1);
@@ -1455,7 +1733,7 @@ async function renderRecent(){
     const im=new Image();im.src=r.thumb;im.alt='';b.appendChild(im);
     const t=document.createElement('span');t.className='rt';t.textContent=r.name;b.appendChild(t);
     let lp=0;try{const v=localStorage.getItem('folix.last.'+r.fp),o=v&&(v[0]==='{'?JSON.parse(v):{p:+v});lp=(o&&o.p)||0}catch(e){}
-    const m=document.createElement('span');m.className='rm';m.textContent=r.pages+' pages · '+new Date(r.t).toLocaleDateString(undefined,{day:'numeric',month:'short'})+(lp>1?' · p.'+lp:'');b.appendChild(m);
+    const m=document.createElement('span');m.className='rm';m.textContent=r.pages+(r.pages===1?' page · ':' pages · ')+new Date(r.t).toLocaleDateString(undefined,{day:'numeric',month:'short'})+(lp>1?' · p.'+lp:'');b.appendChild(m);
     const x=document.createElement('span');x.className='rx btn';x.setAttribute('role','button');x.setAttribute('aria-label','Remove from recent files');x.textContent='×';
     x.onclick=async e=>{e.stopPropagation();await idbReq('readwrite',s=>s.delete(r.fp));renderRecent()};b.appendChild(x);
     b.onclick=async()=>{const rec=await idbReq('readonly',s=>s.get(r.fp));if(rec)openData(new Uint8Array(await rec.blob.arrayBuffer()),rec.name)};
@@ -1623,6 +1901,12 @@ function ptThumb(c){
   });
 }
 let ptIsCreate=false;
+function ptImageRouteLabel(files){
+  const names=ptCards.filter(c=>c.isImg&&c.name).map(c=>c.name);
+  const src=names.length?names:Array.from(files||[]).map(f=>f.name).filter(Boolean);
+  if(!src.length)return 'images';
+  return src.length===1?src[0]:`${src[0]} (+${src.length-1})`;
+}
 function ptOpen(){
   if(!pdf)return;ptIsCreate=false;ptDocs=[{p:pdf,bytes:null}];ptCards=[];
   for(let i=0;i<pdf.numPages;i++)ptCards.push({d:0,i,rot:0,del:false,sel:false});
@@ -1630,6 +1914,7 @@ function ptOpen(){
   if($('ptdesc'))$('ptdesc').textContent='Drag pages to reorder. Rotate, delete or select pages, add pages from another PDF, then apply the changes or save a copy.';
   $('ptapply').textContent='Apply to this document';
   $('pterr').textContent='';ptRender();modal(ptd);
+  syncRoute('page-tools',name||'document.pdf',{push:true});
 }
 async function ptOpenFromImages(files){
   ptIsCreate=true;ptDocs=[];ptCards=[];
@@ -1637,6 +1922,9 @@ async function ptOpenFromImages(files){
   if($('ptdesc'))$('ptdesc').textContent='Drag images to reorder. Rotate or delete pages, add more images or PDF pages, then download or open in editor.';
   $('ptapply').textContent='Open in Folix Editor';
   $('pterr').textContent='';modal(ptd);
+  const lbl=ptImageRouteLabel(files);
+  document.title=lbl+' – Image to PDF – Folix';
+  syncRoute('image-to-pdf',lbl,{push:true});
   await ptAddImages(files);
 }
 async function ptAddImages(files){
@@ -1655,6 +1943,11 @@ async function ptAddImages(files){
     }catch(x){$('pterr').textContent='Could not read image: '+f.name}
   }
   ptRender();
+  if(ptIsCreate&&ptd.open){
+    const lbl=ptImageRouteLabel(files);
+    document.title=lbl+' – Image to PDF – Folix';
+    syncRoute('image-to-pdf',lbl,{push:false});
+  }
 }
 function ptRender(){
   const g=$('ptg');g.textContent='';
@@ -1728,9 +2021,11 @@ $('ptapply').onclick=()=>ptRun(async()=>{
   const list=ptCards.filter(c=>!c.del);
   if(!list.length)throw new Error('Keep at least one page');
   const out=await ptBuild(list);
+  const imgNames=list.filter(c=>c.isImg&&c.name);
+  const createdName=imgNames.length===1?(imgNames[0].name.replace(/\.[^.]+$/,'')+'.pdf'):'created-images.pdf';
   ptd.close();
-  const name=ptIsCreate?'created-images.pdf':(baseName()+'-edited.pdf');
-  await openData(new Uint8Array(out),name);
+  const outName=ptIsCreate?createdName:(baseName()+'-edited.pdf');
+  await openData(new Uint8Array(out),outName);
   msg(ptIsCreate?'New PDF created! You can now annotate, sign, or edit.':'Changes applied. Use Download to save the new file');
 });
 $('ptsave').onclick=()=>ptRun(async()=>{
@@ -1751,7 +2046,10 @@ $('ptaddimg').onchange=async e=>{
   const files=Array.from(e.target.files||[]);e.target.value='';if(!files.length)return;
   await ptAddImages(files);
 };
-ptd.addEventListener('close',()=>{ptDocs.slice(1).forEach(x=>{try{x.p.destroy()}catch(e){}})});
+ptd.addEventListener('close',()=>{
+  ptDocs.slice(1).forEach(x=>{try{x.p.destroy()}catch(e){}});
+  restoreIdleRoute({push:false});
+});
 $('ptb').onclick=ptOpen;
 // ============================================================================
 // SECTION 24: NATURAL LANGUAGE PROCESSING & DICTIONARY HELPERS
@@ -2290,7 +2588,15 @@ $('q').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();stepTo(sCur+(e.shift
 $('dl').onclick=download;$('pr').onclick=print;
 ['dragover','dragenter'].forEach(t=>document.addEventListener(t,e=>{e.preventDefault();empty.classList.add('drag')}));
 ['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{e.preventDefault();empty.classList.remove('drag')}));
-document.addEventListener('drop',e=>readFile(e.dataTransfer.files[0]));
+document.addEventListener('drop',e=>{
+  const files=Array.from(e.dataTransfer.files||[]);
+  if(!files.length)return;
+  if(files.every(f=>/^image\/(png|jpeg|jpg|webp)$/i.test(f.type)||/\.(png|jpe?g|webp)$/i.test(f.name))){
+    ptOpenFromImages(files);
+    return;
+  }
+  readFile(files[0]);
+});
 document.addEventListener('keydown',e=>{
   if(!pdf)return;
   const typing=/INPUT/.test(document.activeElement.tagName);
@@ -2833,8 +3139,7 @@ function closeDoc(){
   pagesEl.innerHTML='';
   empty.classList.remove('hide');
   document.body.classList.remove('reading');
-  document.title='Folix — Private, Fast, In-Browser PDF Reader';
-  history.replaceState(null,'',location.pathname);
+  restoreIdleRoute({push:false});
   resetSide();
   requestAnimationFrame(fitBar);
 }
@@ -2843,6 +3148,13 @@ function handleMenuAction(action){
   switch(action){
     case 'open': if($('file'))$('file').click(); break;
     case 'create-pdf': openCreatePdfDialog(); break;
+    case 'props': openDocProps(); break;
+    case 'protect': openProtectModal(); break;
+    case 'redact-menu': openRedactDialogOrTool(); break;
+    case 'compress': openCompressModal(); break;
+    case 'presentation': togglePresentation(); break;
+    case 'snip-ocr': startSnipOcrTool(); break;
+    case 'cmd': openCommandPalette(); break;
     case 'dl': if(typeof download==='function')download(); else if($('dl'))$('dl').click(); break;
     case 'asave': if($('asave'))$('asave').click(); break;
     case 'png': if($('png'))$('png').click(); break;
@@ -3028,6 +3340,368 @@ function openCreatePdfDialog(){
   }
 }
 
+
+// ============================================================================
+// SECTION 32: FOLIX V1.3 SECURITY & PRIVACY CORE
+// - Document Properties & Metadata Cleaner
+// - Client-Side Password Protection & Permissions
+// - True Client-Side PDF Redaction & Permanent Sanitization
+// ============================================================================
+
+function countRedactions(){
+  let c=0;
+  Object.values(ann).forEach(list=>{
+    if(list)list.forEach(a=>{if(a.t==='redact')c++});
+  });
+  return c;
+}
+
+function syncRedactBar(){
+  const c=countRedactions();
+  const btn=$('redact-bar-act');
+  if(!btn)return;
+  if(c>0){
+    btn.classList.remove('hide');
+    const lbl=$('redact-bar-lbl');
+    if(lbl)lbl.textContent=`Apply Redactions (${c})`;
+  }else{
+    btn.classList.add('hide');
+  }
+}
+
+const redactBarBtn=$('redact-bar-act');
+if(redactBarBtn){
+  redactBarBtn.onclick=()=>openRedactApplyModal();
+}
+
+function formatPdfDate(s){
+  if(!s)return '—';
+  if(typeof s==='string'&&s.startsWith('D:')){
+    const y=s.slice(2,6),m=s.slice(6,8),d=s.slice(8,10),hr=s.slice(10,12),min=s.slice(12,14);
+    if(y&&m&&d)return `${y}-${m}-${d} ${hr||'00'}:${min||'00'}`;
+  }
+  return String(s);
+}
+
+function formatFileSize(n){
+  if(!n)return '0 B';
+  if(n<1024)return n+' B';
+  if(n<1024*1024)return (n/1024).toFixed(1)+' KB';
+  return (n/(1024*1024)).toFixed(2)+' MB ('+n.toLocaleString()+' bytes)';
+}
+
+async function getDocDimensions(){
+  if(!pdf||!pdf.numPages)return '—';
+  try{
+    const p=await pdf.getPage(1);
+    const vp=p.getViewport({scale:1});
+    const wPt=Math.round(vp.width),hPt=Math.round(vp.height);
+    const wMm=Math.round(wPt*0.352778),hMm=Math.round(hPt*0.352778);
+    let name='Custom';
+    if(Math.abs(wMm-210)<=3&&Math.abs(hMm-297)<=3)name='A4';
+    else if(Math.abs(wMm-297)<=3&&Math.abs(hMm-210)<=3)name='A4 Landscape';
+    else if(Math.abs(wMm-216)<=3&&Math.abs(hMm-279)<=3)name='US Letter';
+    return `${name} (${wMm} × ${hMm} mm / ${wPt} × ${hPt} pt)`;
+  }catch(e){
+    return '—';
+  }
+}
+
+// Document Properties
+async function openDocProps(){
+  if(!pdf)return msg('Open a PDF document first');
+  const dlg=$('dlg-props');
+  if(!dlg)return;
+
+  $('prop-filename').textContent=name||'document.pdf';
+  $('prop-filesize').textContent=formatFileSize(bytes?bytes.length:0);
+  $('prop-pages').textContent=pdf.numPages+' page'+(pdf.numPages===1?'':'s');
+  $('prop-dimensions').textContent=await getDocDimensions();
+  $('prop-security').textContent='Standard Unencrypted';
+
+  try{
+    const metaObj=await pdf.getMetadata();
+    const info=(metaObj&&metaObj.info)||{};
+    $('prop-version').textContent=info.PDFFormatVersion?('PDF '+info.PDFFormatVersion):'PDF 1.7';
+    $('prop-title-in').value=info.Title||'';
+    $('prop-author-in').value=info.Author||'';
+    $('prop-subject-in').value=info.Subject||'';
+    $('prop-keywords-in').value=info.Keywords||'';
+    $('prop-creator-val').textContent=info.Creator||'—';
+    $('prop-producer-val').textContent=info.Producer||'—';
+    $('prop-created-val').textContent=formatPdfDate(info.CreationDate);
+    $('prop-modified-val').textContent=formatPdfDate(info.ModDate);
+  }catch(e){
+    console.warn('Metadata lookup failed',e);
+  }
+
+  modal(dlg);
+}
+
+async function saveDocMetadata(stripAll=false){
+  try{
+    msg('Processing metadata…');
+    await ensurePdfLib();
+    const {PDFDocument,PDFName}=window.PDFLib;
+    let baseData=await formBytes();
+    let doc=await PDFDocument.load(baseData);
+
+    if(stripAll){
+      doc.setTitle('');doc.setAuthor('');doc.setSubject('');
+      doc.setKeywords([]);doc.setProducer('');doc.setCreator('');
+      if(doc.catalog.has(PDFName.of('Metadata'))){
+        doc.catalog.delete(PDFName.of('Metadata'));
+      }
+      $('prop-title-in').value='';
+      $('prop-author-in').value='';
+      $('prop-subject-in').value='';
+      $('prop-keywords-in').value='';
+      $('prop-creator-val').textContent='(Stripped)';
+      $('prop-producer-val').textContent='(Stripped)';
+      $('prop-created-val').textContent='(Stripped)';
+      $('prop-modified-val').textContent='(Stripped)';
+    }else{
+      doc.setTitle($('prop-title-in').value.trim());
+      doc.setAuthor($('prop-author-in').value.trim());
+      doc.setSubject($('prop-subject-in').value.trim());
+      const kw=$('prop-keywords-in').value.split(',').map(s=>s.trim()).filter(Boolean);
+      doc.setKeywords(kw);
+    }
+
+    const newBytes=await doc.save();
+    bytes=newBytes;
+    if(stripAll){
+      msg('All document metadata stripped for 100% privacy');
+    }else{
+      msg('Document metadata saved');
+      $('dlg-props').close();
+    }
+    return newBytes;
+  }catch(err){
+    console.error(err);
+    msg('Could not update metadata: '+err.message);
+    return null;
+  }
+}
+
+if($('props-save-btn'))$('props-save-btn').onclick=()=>saveDocMetadata(false);
+if($('props-strip-btn'))$('props-strip-btn').onclick=()=>saveDocMetadata(true);
+if($('props-clean-dl-btn'))$('props-clean-dl-btn').onclick=async()=>{
+  const cleaned=await saveDocMetadata(true);
+  if(cleaned){
+    downloadBytes(cleaned,baseName()+'-cleaned.pdf');
+    $('dlg-props').close();
+  }
+};
+if($('props-close'))$('props-close').onclick=()=>$('dlg-props').close();
+
+// Password Protection
+function openProtectModal(){
+  if(!pdf)return msg('Open a PDF first');
+  const dlg=$('dlg-protect');
+  if(!dlg)return;
+  $('protect-pw-open').value='';
+  $('protect-pw-confirm').value='';
+  $('protect-pw-owner').value='';
+  $('protect-err').textContent='';
+  $('protect-err').classList.add('hide');
+  $('protect-adv-panel').classList.add('hide');
+  modal(dlg);
+  setTimeout(()=>$('protect-pw-open').focus(),30);
+}
+
+if($('protect-adv-btn'))$('protect-adv-btn').onclick=()=>{
+  $('protect-adv-panel').classList.toggle('hide');
+};
+
+document.querySelectorAll('.btn-eye').forEach(btn=>{
+  btn.onclick=()=>{
+    const inp=$(btn.dataset.target);
+    if(!inp)return;
+    const isPw=inp.type==='password';
+    inp.type=isPw?'text':'password';
+    btn.textContent=isPw?'🙈':'👁️';
+  };
+});
+
+async function executeProtect(targetAction){
+  const openPw=$('protect-pw-open').value;
+  const confPw=$('protect-pw-confirm').value;
+  const ownerPw=$('protect-pw-owner').value;
+  const errEl=$('protect-err');
+
+  if(!openPw){
+    errEl.textContent='Please enter a Document Open Password.';
+    errEl.classList.remove('hide');
+    $('protect-pw-open').focus();
+    return;
+  }
+  if(openPw!==confPw){
+    errEl.textContent='Passwords do not match. Please re-enter to confirm.';
+    errEl.classList.remove('hide');
+    $('protect-pw-confirm').focus();
+    return;
+  }
+  errEl.classList.add('hide');
+
+  try{
+    msg('Encrypting document…');
+    await ensurePdfEncrypt();
+    const out=await outputBytes();
+    const data=out?out.data:bytes;
+
+    const encrypted=await window.PDFEncryptLite.encryptPDF(data,openPw,{
+      ownerPassword:ownerPw||openPw,
+      allowPrinting:$('perm-print').checked,
+      allowCopying:$('perm-copy').checked,
+      allowFillingForms:$('perm-forms').checked,
+      allowModifying:$('perm-modify').checked
+    });
+
+    $('dlg-protect').close();
+
+    if(targetAction==='download'){
+      downloadBytes(encrypted,baseName()+'-protected.pdf');
+      msg('Password-protected PDF downloaded.');
+    }else{
+      await openData(encrypted,baseName()+'-protected.pdf');
+      msg('Protected PDF loaded into Folix.');
+    }
+  }catch(err){
+    console.error(err);
+    errEl.textContent='Encryption failed: '+err.message;
+    errEl.classList.remove('hide');
+  }
+}
+
+if($('protect-download-btn'))$('protect-download-btn').onclick=()=>executeProtect('download');
+if($('protect-view-btn'))$('protect-view-btn').onclick=()=>executeProtect('view');
+if($('protect-close'))$('protect-close').onclick=()=>$('dlg-protect').close();
+
+// Redaction & Permanent Sanitization
+function openRedactDialogOrTool(){
+  if(!pdf)return msg('Open a PDF document first');
+  const abar=$('abar');
+  if(abar&&abar.classList.contains('hide')){
+    $('ann').click();
+  }
+  setTool('redact');
+  const c=countRedactions();
+  if(c>0){
+    openRedactApplyModal();
+  }else{
+    msg('Redact tool active. Drag over confidential areas or select text to mark for permanent removal.');
+  }
+}
+
+function openRedactApplyModal(){
+  const c=countRedactions();
+  if(!c){
+    msg('No redaction marks placed yet. Use the Redact tool to mark areas first.');
+    return;
+  }
+  const dlg=$('dlg-redact-apply');
+  if(!dlg)return;
+  $('redact-count-msg').textContent=`${c} confidential area${c===1?'':'s'} marked for permanent removal.`;
+  $('redact-prog').classList.add('hide');
+  modal(dlg);
+}
+
+if($('redact-apply-close'))$('redact-apply-close').onclick=()=>$('dlg-redact-apply').close();
+
+async function executeRedactions(targetAction){
+  const c=countRedactions();
+  if(!c)return msg('No redactions to apply');
+  const stripMeta=$('redact-strip-meta').checked;
+  const prog=$('redact-prog'),bar=$('redact-bar'),stat=$('redact-stat'),pct=$('redact-pct');
+  prog.classList.remove('hide');bar.style.width='5%';pct.textContent='5%';stat.textContent='Preparing document engine…';
+
+  try{
+    await ensurePdfLib();
+    const {PDFDocument}=window.PDFLib;
+    let baseData=await formBytes();
+    let doc=await PDFDocument.load(baseData);
+
+    const redactedPages=[];
+    for(let i=0;i<pdf.numPages;i++){
+      const list=ann[i];
+      if(list&&list.some(a=>a.t==='redact')){
+        redactedPages.push(i);
+      }
+    }
+
+    const total=redactedPages.length;
+    for(let idx=0;idx<total;idx++){
+      const pi=redactedPages[idx];
+      const percent=Math.round(((idx+1)/total)*80);
+      bar.style.width=percent+'%';pct.textContent=percent+'%';
+      stat.textContent=`Sanitizing page ${pi+1} of ${pdf.numPages}…`;
+
+      const p=await pdf.getPage(pi+1);
+      const vp=p.getViewport({scale:2.5});
+      const cv=document.createElement('canvas');
+      cv.width=vp.width;cv.height=vp.height;
+      const ctx=cv.getContext('2d');
+      await p.render({canvasContext:ctx,viewport:vp}).promise;
+
+      // Burn solid black rectangles over each redaction box
+      const list=ann[pi].filter(a=>a.t==='redact');
+      ctx.fillStyle='#000000';
+      list.forEach(a=>{
+        const p1=vp.convertToViewportPoint(a.x,a.y);
+        const p2=vp.convertToViewportPoint(a.x+a.w,a.y+a.h);
+        const rx=Math.min(p1[0],p2[0]),ry=Math.min(p1[1],p2[1]);
+        const rw=Math.abs(p1[0]-p2[0]),rh=Math.abs(p1[1]-p2[1]);
+        ctx.fillRect(rx,ry,rw,rh);
+      });
+
+      const pngUrl=cv.toDataURL('image/png');
+      const embeddedImg=await doc.embedPng(pngUrl);
+
+      const origVp=p.getViewport({scale:1});
+      const pw=origVp.width,ph=origVp.height;
+
+      const newPage=doc.insertPage(pi,[pw,ph]);
+      newPage.drawImage(embeddedImg,{x:0,y:0,width:pw,height:ph});
+      doc.removePage(pi+1);
+
+      // Clear applied redactions from memory for this page
+      ann[pi]=ann[pi].filter(a=>a.t!=='redact');
+    }
+
+    if(stripMeta){
+      stat.textContent='Stripping document metadata…';
+      doc.setTitle('');doc.setAuthor('');doc.setSubject('');
+      doc.setKeywords([]);doc.setProducer('');doc.setCreator('');
+      if(doc.catalog.has(window.PDFLib.PDFName.of('Metadata'))){
+        doc.catalog.delete(window.PDFLib.PDFName.of('Metadata'));
+      }
+    }
+
+    bar.style.width='100%';pct.textContent='100%';stat.textContent='Finalizing sanitized PDF…';
+    const sanitizedBytes=await doc.save();
+
+    $('dlg-redact-apply').close();
+    prog.classList.add('hide');
+    syncRedactBar();
+
+    if(targetAction==='download'){
+      downloadBytes(sanitizedBytes,baseName()+'-sanitized.pdf');
+      msg('Sanitized PDF downloaded. All redacted text and layers permanently destroyed.');
+    }else{
+      await openData(sanitizedBytes,baseName()+'-sanitized.pdf');
+      msg('Sanitized PDF loaded in viewer. Redacted pages permanently rasterized.');
+    }
+  }catch(err){
+    console.error(err);
+    prog.classList.add('hide');
+    msg('Redaction failed: '+err.message);
+  }
+}
+
+if($('redact-confirm-dl-btn'))$('redact-confirm-dl-btn').onclick=()=>executeRedactions('download');
+if($('redact-confirm-view-btn'))$('redact-confirm-view-btn').onclick=()=>executeRedactions('view');
+
 function openWordStudio(){
   if(window.FolixCreate && window.FolixCreate.openWordStudio){
     window.FolixCreate.openWordStudio();
@@ -3037,23 +3711,742 @@ function openWordStudio(){
   }
 }
 
+// ============================================================================
+// SECTION 33: COMMAND PALETTE (CTRL+K / CMD+K)
+// ============================================================================
+
+const COMMANDS = [
+  { id: 'open', title: 'Open PDF Document', desc: 'Browse and load a PDF file from your device', cat: 'File', kbd: 'Ctrl+O', act: () => $('file') && $('file').click() },
+  { id: 'create', title: 'Create New PDF', desc: 'Compile images or compose MS Word-style rich text document', cat: 'File', kbd: 'Ctrl+N', act: openCreatePdfDialog },
+  { id: 'compress', title: 'Compress & Optimize PDF', desc: 'Re-encode raster pages at 100–200 DPI to reduce file size', cat: 'File', kbd: '', act: openCompressModal, needPdf: true },
+  { id: 'dl', title: 'Download Original PDF', desc: 'Save current unmodified PDF file to disk', cat: 'File', kbd: 'Ctrl+S', act: download, needPdf: true },
+  { id: 'asave', title: 'Save Annotated PDF', desc: 'Burn all vector annotations, notes, and signatures into PDF', cat: 'File', kbd: '', act: () => $('asave') && $('asave').click(), needPdf: true },
+  { id: 'pr', title: 'Print Document', desc: 'Send document to system print dialog', cat: 'File', kbd: 'Ctrl+P', act: print, needPdf: true },
+  { id: 'props', title: 'Document Properties & Metadata', desc: 'Inspect file details, page sizes, encryption, and sanitize metadata', cat: 'File', kbd: 'Ctrl+D', act: openDocProps, needPdf: true },
+  { id: 'protect', title: 'Protect & Encrypt PDF', desc: 'Encrypt document with RC4 128-bit password & fine-grained permissions', cat: 'Security', kbd: '', act: openProtectModal, needPdf: true },
+  { id: 'redact', title: 'Redact & Sanitize PDF', desc: 'Permanently destroy confidential text, layers, and metadata', cat: 'Security', kbd: 'Shift+R', act: openRedactDialogOrTool, needPdf: true },
+  
+  { id: 'presentation', title: 'Presentation / Slideshow Mode', desc: 'Borderless black presentation mode with glowing laser pointer', cat: 'View', kbd: 'F5', act: togglePresentation, needPdf: true },
+  { id: 'snip-ocr', title: 'Snip OCR (Area Text Recognition)', desc: 'Crop any page region with marquee to recognize text offline', cat: 'Tools', kbd: '', act: startSnipOcrTool, needPdf: true },
+  { id: 'ocrb', title: 'Recognize Full Document (OCR)', desc: 'Extract full page text or build searchable PDF using Tesseract', cat: 'Tools', kbd: 'O', act: () => $('ocrb') && $('ocrb').click(), needPdf: true },
+  { id: 'tts', title: 'Read Aloud (Text-to-Speech)', desc: 'Listen to document text with synchronized audio speech', cat: 'Tools', kbd: 'V', act: () => $('tts') && $('tts').click(), needPdf: true },
+  { id: 'trdoc', title: 'Translate Entire Document', desc: 'Translate document text locally on-device or via MyMemory', cat: 'Translate', kbd: 'X', act: () => { setSidebar(true,true); setTab('trans'); trRun(true); }, needPdf: true },
+  
+  { id: 'ann', title: 'Toggle Annotations Toolbar', desc: 'Access pen, marker, highlight, text, note, stamp tools', cat: 'Edit', kbd: 'A', act: () => $('ann') && $('ann').click(), needPdf: true },
+  { id: 'ann-export-md', title: 'Export Annotations as Markdown', desc: 'Generate and download notes & highlights summary in .md', cat: 'Edit', kbd: '', act: exportAnnotationsMarkdown, needPdf: true },
+  { id: 'undo', title: 'Undo Last Annotation', desc: 'Revert most recent drawing or annotation action', cat: 'Edit', kbd: 'Ctrl+Z', act: undo, needPdf: true },
+  { id: 'redo', title: 'Redo Annotation', desc: 'Re-apply reverted drawing or annotation action', cat: 'Edit', kbd: 'Ctrl+Y', act: redo, needPdf: true },
+  { id: 'ptb', title: 'Page Tools (Reorder, Rotate, Delete)', desc: 'Rearrange pages, merge additional files, extract sheets', cat: 'Pages', kbd: 'E', act: () => $('ptb') && $('ptb').click(), needPdf: true },
+  
+  { id: 'sb', title: 'Toggle Pages Sidebar', desc: 'Show/hide page thumbnails, document outline, notes, search', cat: 'View', kbd: 'S', act: () => $('sb') && $('sb').click(), needPdf: true },
+  { id: 'search', title: 'Search in Document', desc: 'Find words and phrases with Custom Highlight matching', cat: 'View', kbd: 'Ctrl+F', act: () => { showBar(); $('q').focus(); $('q').select(); }, needPdf: true },
+  { id: 'fit', title: 'Fit to Width', desc: 'Scale page to fit window viewport width', cat: 'View', kbd: 'W', act: fitWidth, needPdf: true },
+  { id: 'fith', title: 'Fit to Height', desc: 'Scale page to fit window viewport height', cat: 'View', kbd: 'H', act: fitHeight, needPdf: true },
+  { id: 'trim', title: 'Fit Content (Trim Margins)', desc: 'Crop whitespace margins for maximum text magnification', cat: 'View', kbd: 'C', act: () => $('trim') && $('trim').click(), needPdf: true },
+  { id: 'two', title: 'Two-Page Spread View', desc: 'Side-by-side book reading mode', cat: 'View', kbd: '2', act: () => $('two') && $('two').click(), needPdf: true },
+  { id: 'spot', title: 'Spotlight Night Reading Mode', desc: 'Darken background with soft cursor-following illumination', cat: 'View', kbd: 'L', act: () => $('spotb') && $('spotb').click(), needPdf: true },
+  { id: 'rot', title: 'Rotate Document 90°', desc: 'Rotate all pages clockwise by 90 degrees', cat: 'View', kbd: 'R', act: () => $('rot') && $('rot').click(), needPdf: true },
+  
+  { id: 'theme-light', title: 'Theme: Light Mode', desc: 'Crisp high-contrast daylight reading theme', cat: 'Theme', kbd: '', act: () => setTheme('light') },
+  { id: 'theme-dark-ui', title: 'Theme: Dark UI (Light PDF)', desc: 'Dark window chrome with pristine white PDF pages', cat: 'Theme', kbd: '', act: () => setTheme('dark-ui') },
+  { id: 'theme-dark', title: 'Theme: Dark Mode (Invert PDF)', desc: 'Full dark mode with high-contrast inverted PDF colors', cat: 'Theme', kbd: '', act: () => setTheme('dark') },
+  { id: 'theme-sepia', title: 'Theme: Sepia Warm Mode', desc: 'Warm paper tint for extended fatigue-free reading', cat: 'Theme', kbd: '', act: () => setTheme('sepia') },
+  
+  { id: 'shortcuts', title: 'Keyboard Shortcuts Help', desc: 'View complete table of keyboard hotkeys and actions', cat: 'Help', kbd: '?', act: () => { closePops(); $('hk').showModal(); } }
+];
+
+let activeCmdIndex = 0;
+let filteredCommands = [];
+
+function openCommandPalette(){
+  const dlg = $('dlg-cmd');
+  if(!dlg) return;
+  closePops();
+  closeAllMenus();
+  $('cmd-search').value = '';
+  activeCmdIndex = 0;
+  modal(dlg);
+  renderCommandList('');
+  setTimeout(() => $('cmd-search').focus(), 30);
+}
+
+function renderCommandList(query){
+  const list = $('cmd-results');
+  if(!list) return;
+  list.innerHTML = '';
+  const q = (query || '').trim().toLowerCase();
+
+  filteredCommands = COMMANDS.filter(cmd => {
+    if(cmd.needPdf && !pdf) return false;
+    if(!q) return true;
+    return cmd.title.toLowerCase().includes(q) ||
+           cmd.desc.toLowerCase().includes(q) ||
+           cmd.cat.toLowerCase().includes(q) ||
+           (cmd.kbd && cmd.kbd.toLowerCase().includes(q));
+  });
+
+  if(!filteredCommands.length){
+    const empty = document.createElement('div');
+    empty.className = 'cmd-empty';
+    empty.textContent = 'No commands matching "' + query + '"';
+    list.appendChild(empty);
+    if($('cmd-count')) $('cmd-count').textContent = '0 commands';
+    return;
+  }
+
+  if(activeCmdIndex >= filteredCommands.length) activeCmdIndex = 0;
+  if($('cmd-count')) $('cmd-count').textContent = `${filteredCommands.length} command${filteredCommands.length === 1 ? '' : 's'}`;
+
+  filteredCommands.forEach((cmd, idx) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'cmd-item' + (idx === activeCmdIndex ? ' active' : '');
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', idx === activeCmdIndex ? 'true' : 'false');
+
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'cmd-item-icon';
+    iconWrap.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="9 18 15 12 9 6"/></svg>';
+
+    const body = document.createElement('div');
+    body.className = 'cmd-item-body';
+
+    const title = document.createElement('div');
+    title.className = 'cmd-item-title';
+    title.textContent = cmd.title;
+
+    const desc = document.createElement('div');
+    desc.className = 'cmd-item-desc';
+    desc.textContent = cmd.desc;
+
+    body.append(title, desc);
+
+    const meta = document.createElement('div');
+    meta.className = 'cmd-item-meta';
+
+    const badge = document.createElement('span');
+    badge.className = 'cmd-badge';
+    badge.textContent = cmd.cat;
+    meta.appendChild(badge);
+
+    if(cmd.kbd){
+      const kbd = document.createElement('kbd');
+      kbd.className = 'cmd-kbd';
+      kbd.textContent = cmd.kbd;
+      meta.appendChild(kbd);
+    }
+
+    item.append(iconWrap, body, meta);
+
+    item.onmouseenter = () => {
+      activeCmdIndex = idx;
+      updateActiveCmdItem();
+    };
+
+    item.onclick = () => {
+      $('dlg-cmd').close();
+      cmd.act();
+    };
+
+    list.appendChild(item);
+  });
+
+  ensureActiveCmdVisible();
+}
+
+function updateActiveCmdItem(){
+  const items = document.querySelectorAll('#cmd-results .cmd-item');
+  items.forEach((it, idx) => {
+    const isAct = idx === activeCmdIndex;
+    it.classList.toggle('active', isAct);
+    it.setAttribute('aria-selected', isAct ? 'true' : 'false');
+  });
+}
+
+function ensureActiveCmdVisible(){
+  const items = document.querySelectorAll('#cmd-results .cmd-item');
+  if(items[activeCmdIndex]){
+    items[activeCmdIndex].scrollIntoView({ block: 'nearest' });
+  }
+}
+
+if($('cmd-search')){
+  $('cmd-search').addEventListener('input', e => {
+    activeCmdIndex = 0;
+    renderCommandList(e.target.value);
+  });
+  $('cmd-search').addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      if(filteredCommands.length > 0){
+        activeCmdIndex = (activeCmdIndex + 1) % filteredCommands.length;
+        updateActiveCmdItem();
+        ensureActiveCmdVisible();
+      }
+    } else if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      if(filteredCommands.length > 0){
+        activeCmdIndex = (activeCmdIndex - 1 + filteredCommands.length) % filteredCommands.length;
+        updateActiveCmdItem();
+        ensureActiveCmdVisible();
+      }
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      if(filteredCommands.length > 0 && filteredCommands[activeCmdIndex]){
+        $('dlg-cmd').close();
+        filteredCommands[activeCmdIndex].act();
+      }
+    } else if(e.key === 'Escape'){
+      $('dlg-cmd').close();
+    }
+  });
+}
+
+// ============================================================================
+// SECTION 34: PRESENTATION / SLIDESHOW MODE (F5) WITH GLOWING LASER CURSOR
+// ============================================================================
+
+let isPresentation = false;
+let laserActive = false;
+let presIdleTimer = null;
+
+function togglePresentation(){
+  if(isPresentation) exitPresentation();
+  else startPresentation();
+}
+
+function startPresentation(){
+  if(!pdf) return msg('Open a PDF document first');
+  isPresentation = true;
+  document.body.classList.add('presentation-mode');
+  
+  const ctl = $('presentation-ctl');
+  if(ctl) ctl.classList.remove('hide');
+  
+  if(document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+  
+  fitPresentationSlide();
+  updatePresentationHUD();
+  resetPresentationIdleTimer();
+  msg('Presentation mode active. Press F5 or Esc to exit.');
+}
+
+function exitPresentation(){
+  isPresentation = false;
+  laserActive = false;
+  document.body.classList.remove('presentation-mode', 'laser-active');
+  
+  const ctl = $('presentation-ctl');
+  if(ctl) ctl.classList.add('hide');
+  const dot = $('laser-dot');
+  if(dot) dot.classList.add('hide');
+  
+  if(document.fullscreenElement && document.exitFullscreen){
+    document.exitFullscreen().catch(() => {});
+  }
+  
+  fitWidth();
+}
+
+function toggleLaser(){
+  if(!isPresentation) return;
+  laserActive = !laserActive;
+  document.body.classList.toggle('laser-active', laserActive);
+  const dot = $('laser-dot');
+  if(dot) dot.classList.toggle('hide', !laserActive);
+  const btn = $('pres-laser');
+  if(btn) btn.classList.toggle('on', laserActive);
+}
+
+function updatePresentationHUD(){
+  if($('pres-counter')) $('pres-counter').textContent = `Slide ${cur} of ${pdf ? pdf.numPages : 1}`;
+  if($('pres-prev')) $('pres-prev').disabled = cur <= 1;
+  if($('pres-next')) $('pres-next').disabled = pdf && cur >= pdf.numPages;
+}
+
+function fitPresentationSlide(){
+  if(!pdf) return;
+  const pageEl = pagesEl.children[cur - 1];
+  if(!pageEl) return;
+  const pw = pageEl._W || 600, ph = pageEl._H || 800;
+  const availW = window.innerWidth - 30;
+  const availH = window.innerHeight - 30;
+  const targetScale = Math.min(availW / pw, availH / ph);
+  setScale(Math.max(C.minScale, Math.min(C.maxScale, targetScale)));
+  go(cur);
+}
+
+function resetPresentationIdleTimer(){
+  const ctl = $('presentation-ctl');
+  if(!ctl || !isPresentation) return;
+  ctl.classList.remove('idle');
+  clearTimeout(presIdleTimer);
+  presIdleTimer = setTimeout(() => {
+    if(isPresentation) ctl.classList.add('idle');
+  }, 3500);
+}
+
+window.addEventListener('pointermove', e => {
+  if(!isPresentation) return;
+  resetPresentationIdleTimer();
+  if(laserActive){
+    const dot = $('laser-dot');
+    if(dot){
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+    }
+  }
+}, { passive: true });
+
+if($('pres-prev')) $('pres-prev').onclick = () => {
+  if(cur > 1){
+    go(cur - 1);
+    updatePresentationHUD();
+    fitPresentationSlide();
+  }
+};
+if($('pres-next')) $('pres-next').onclick = () => {
+  if(pdf && cur < pdf.numPages){
+    go(cur + 1);
+    updatePresentationHUD();
+    fitPresentationSlide();
+  }
+};
+if($('pres-laser')) $('pres-laser').onclick = toggleLaser;
+if($('pres-exit')) $('pres-exit').onclick = exitPresentation;
+
+// ============================================================================
+// SECTION 35: AREA / SNIP OCR (CROP TO OCR)
+// ============================================================================
+
+let activeSnipData = null;
+
+function startSnipOcrTool(){
+  if(!pdf) return msg('Open a PDF document first');
+  const abar = $('abar');
+  if(abar && abar.classList.contains('hide')){
+    $('ann').click();
+  }
+  setTool('snip-ocr');
+  msg('Snip OCR active. Click & drag a box across any page area to scan text.');
+}
+
+async function executeSnipOcr(pageContainer, pi, x, y, w, h){
+  try {
+    msg('Extracting page crop for OCR…');
+    const pNum = pi + 1;
+    const page = await pdf.getPage(pNum);
+    const dpr = Math.max(2, Math.min(3, window.devicePixelRatio || 2));
+    const vp = page.getViewport({ scale: dpr });
+    
+    const sx = Math.max(0, Math.round(x * dpr));
+    const sy = Math.max(0, Math.round(y * dpr));
+    const sw = Math.min(vp.width - sx, Math.round(w * dpr));
+    const sh = Math.min(vp.height - sy, Math.round(h * dpr));
+    
+    if(sw < 10 || sh < 10) return msg('Selection too small to OCR');
+
+    const fullCanvas = document.createElement('canvas');
+    fullCanvas.width = vp.width;
+    fullCanvas.height = vp.height;
+    const fullCtx = fullCanvas.getContext('2d');
+    await page.render({ canvasContext: fullCtx, viewport: vp }).promise;
+
+    const cropCanvas = document.createElement('canvas');
+    cropCanvas.width = sw;
+    cropCanvas.height = sh;
+    const cropCtx = cropCanvas.getContext('2d');
+    cropCtx.drawImage(fullCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+
+    activeSnipData = { pi, x, y, w, h, canvas: cropCanvas };
+
+    const thumbCanvas = $('snip-ocr-canvas');
+    if(thumbCanvas){
+      thumbCanvas.width = sw;
+      thumbCanvas.height = sh;
+      const tCtx = thumbCanvas.getContext('2d');
+      tCtx.drawImage(cropCanvas, 0, 0);
+    }
+
+    $('snip-ocr-status').textContent = 'Initializing engine…';
+    $('snip-ocr-out').value = '';
+    modal($('dlg-snip-ocr'));
+
+    await runSnipOcrProcess();
+  } catch(err){
+    console.error('Snip OCR crop error:', err);
+    msg('Could not crop area: ' + err.message);
+  }
+}
+
+async function runSnipOcrProcess(){
+  if(!activeSnipData || !activeSnipData.canvas) return;
+  const lang = ($('snip-ocr-lang') && $('snip-ocr-lang').value) || 'eng';
+  $('snip-ocr-status').textContent = 'Recognizing text…';
+
+  try {
+    await ensureTesseract();
+    const worker = await getOcrWorker(lang);
+    if(!worker){
+      $('snip-ocr-status').textContent = 'Failed to load OCR worker';
+      return;
+    }
+    const res = await worker.recognize(activeSnipData.canvas);
+    const txt = (res.data && res.data.text || '').trim();
+    $('snip-ocr-out').value = txt;
+    $('snip-ocr-status').textContent = txt ? `Done (${Math.round(res.data.confidence || 90)}% confidence)` : 'No text recognized in region';
+  } catch(err){
+    console.error('OCR recognition error:', err);
+    $('snip-ocr-status').textContent = 'Recognition error: ' + err.message;
+  }
+}
+
+if($('snip-ocr-close')) $('snip-ocr-close').onclick = () => $('dlg-snip-ocr').close();
+if($('snip-ocr-retry')) $('snip-ocr-retry').onclick = runSnipOcrProcess;
+if($('snip-ocr-copy')) $('snip-ocr-copy').onclick = () => {
+  const txt = $('snip-ocr-out').value;
+  if(!txt) return msg('No text to copy');
+  navigator.clipboard.writeText(txt).then(() => {
+    const orig = $('snip-ocr-copy').textContent;
+    $('snip-ocr-copy').textContent = 'Copied! ✓';
+    setTimeout(() => { $('snip-ocr-copy').textContent = orig; }, 1800);
+  });
+};
+if($('snip-ocr-note')) $('snip-ocr-note').onclick = () => {
+  const txt = $('snip-ocr-out').value.trim();
+  if(!txt || !activeSnipData) return msg('No recognized text to insert');
+  addAnn(activeSnipData.pi, { t: 'note', c: '#ffd60a', x: activeSnipData.x, y: activeSnipData.y, s: txt });
+  $('dlg-snip-ocr').close();
+  msg('Note created on page ' + (activeSnipData.pi + 1));
+};
+if($('snip-ocr-trans')) $('snip-ocr-trans').onclick = () => {
+  const txt = $('snip-ocr-out').value.trim();
+  if(!txt) return msg('No text to translate');
+  $('dlg-snip-ocr').close();
+  setSidebar(true, true);
+  setTab('trans');
+  if($('trout')) $('trout').textContent = txt;
+};
+
+// ============================================================================
+// SECTION 36: CLIENT-SIDE PDF COMPRESSION & OPTIMIZATION
+// ============================================================================
+
+let compressedPdfBytes = null;
+
+function openCompressModal(){
+  if(!pdf || !bytes) return msg('Open a PDF document first');
+  
+  if($('compress-fname')) $('compress-fname').textContent = name || 'document.pdf';
+  if($('compress-fsize')) $('compress-fsize').textContent = (bytes.length / (1024 * 1024)).toFixed(2) + ' MB';
+  if($('compress-fpages')) $('compress-fpages').textContent = pdf.numPages + (pdf.numPages === 1 ? ' page' : ' pages');
+
+  if($('compress-prog')) $('compress-prog').classList.add('hide');
+  if($('compress-result')) $('compress-result').classList.add('hide');
+  if($('compress-start-btn')) $('compress-start-btn').classList.remove('hide');
+  if($('compress-dl-btn')) $('compress-dl-btn').classList.add('hide');
+  if($('compress-view-btn')) $('compress-view-btn').classList.add('hide');
+  
+  compressedPdfBytes = null;
+  modal($('dlg-compress'));
+}
+
+async function executeCompressionProcess(){
+  if(!pdf || !bytes) return;
+
+  const profile = (document.querySelector('input[name="compress-profile"]:checked') || {}).value || 'balanced';
+  let dpi = 150, quality = 0.75;
+  if(profile === 'max'){
+    dpi = 100; quality = 0.55;
+  } else if(profile === 'light'){
+    dpi = 200; quality = 0.85;
+  } else if(profile === 'custom'){
+    dpi = +($('compress-custom-dpi') && $('compress-custom-dpi').value) || 150;
+    quality = (+($('compress-custom-quality') && $('compress-custom-quality').value) || 75) / 100;
+  }
+
+  const stripMeta = $('compress-strip-meta') ? $('compress-strip-meta').checked : true;
+  const prog = $('compress-prog'), bar = $('compress-bar'), stat = $('compress-stat'), pct = $('compress-pct');
+  
+  if(prog) prog.classList.remove('hide');
+  if($('compress-start-btn')) $('compress-start-btn').disabled = true;
+
+  try {
+    await ensurePdfLib();
+    const { PDFDocument } = window.PDFLib;
+    const outDoc = await PDFDocument.create();
+
+    const total = pdf.numPages;
+    for(let i = 1; i <= total; i++){
+      const progress = Math.round(((i - 1) / total) * 100);
+      if(bar) bar.style.width = progress + '%';
+      if(pct) pct.textContent = progress + '%';
+      if(stat) stat.textContent = `Optimizing page ${i} of ${total} (${dpi} DPI)…`;
+
+      const p = await pdf.getPage(i);
+      const scale = dpi / 72;
+      const vp = p.getViewport({ scale });
+      
+      const cv = document.createElement('canvas');
+      cv.width = vp.width;
+      cv.height = vp.height;
+      const ctx = cv.getContext('2d');
+      await p.render({ canvasContext: ctx, viewport: vp }).promise;
+
+      // Extract JPEG bytes
+      const dataUrl = cv.toDataURL('image/jpeg', quality);
+      const b64 = dataUrl.split(',')[1];
+      const binary = atob(b64);
+      const imgBytes = new Uint8Array(binary.length);
+      for(let j = 0; j < binary.length; j++) imgBytes[j] = binary.charCodeAt(j);
+
+      const origVp = p.getViewport({ scale: 1 });
+      const embeddedJpg = await outDoc.embedJpg(imgBytes);
+      const newPage = outDoc.addPage([origVp.width, origVp.height]);
+      newPage.drawImage(embeddedJpg, { x: 0, y: 0, width: origVp.width, height: origVp.height });
+    }
+
+    if(bar) bar.style.width = '100%';
+    if(pct) pct.textContent = '100%';
+    if(stat) stat.textContent = 'Finalizing document structure…';
+
+    if(stripMeta){
+      outDoc.setTitle('');
+      outDoc.setAuthor('');
+      outDoc.setSubject('');
+      outDoc.setKeywords([]);
+      outDoc.setProducer('Folix Modern Optimizer');
+      outDoc.setCreator('Folix PDF');
+    }
+
+    compressedPdfBytes = await outDoc.save({ useObjectStreams: true });
+    
+    // Calculate size savings
+    const origBytes = bytes.length;
+    const newBytes = compressedPdfBytes.length;
+    const reduction = Math.round((1 - (newBytes / origBytes)) * 100);
+
+    if($('compress-res-old')) $('compress-res-old').textContent = (origBytes / (1024 * 1024)).toFixed(2) + ' MB';
+    if($('compress-res-new')) $('compress-res-new').textContent = (newBytes / (1024 * 1024)).toFixed(2) + ' MB';
+    if($('compress-res-badge')) {
+      $('compress-res-badge').textContent = reduction > 0 ? `-${reduction}%` : '+0%';
+      $('compress-res-badge').style.color = reduction > 0 ? '#1a9e4d' : '#888';
+    }
+
+    if($('compress-result')) $('compress-result').classList.remove('hide');
+    if($('compress-start-btn')) $('compress-start-btn').classList.add('hide');
+    if($('compress-dl-btn')) $('compress-dl-btn').classList.remove('hide');
+    if($('compress-view-btn')) $('compress-view-btn').classList.remove('hide');
+    msg('Compression complete! ' + (reduction > 0 ? `${reduction}% smaller` : 'optimized'));
+
+  } catch(err){
+    console.error('Compression failure:', err);
+    if(stat) stat.textContent = 'Compression error: ' + err.message;
+    msg('Compression failed: ' + err.message);
+  } finally {
+    if($('compress-start-btn')) $('compress-start-btn').disabled = false;
+  }
+}
+
+if($('compress-close')) $('compress-close').onclick = () => $('dlg-compress').close();
+if($('compress-start-btn')) $('compress-start-btn').onclick = executeCompressionProcess;
+if($('compress-dl-btn')) $('compress-dl-btn').onclick = () => {
+  if(!compressedPdfBytes) return;
+  downloadBytes(compressedPdfBytes, baseName() + '-compressed.pdf');
+};
+if($('compress-view-btn')) $('compress-view-btn').onclick = async () => {
+  if(!compressedPdfBytes) return;
+  $('dlg-compress').close();
+  await openData(compressedPdfBytes, baseName() + '-compressed.pdf');
+  msg('Compressed document loaded into viewer.');
+};
+
+document.querySelectorAll('input[name="compress-profile"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.compress-card').forEach(c => c.classList.remove('active'));
+    radio.closest('.compress-card').classList.add('active');
+    const customPanel = $('compress-custom-panel');
+    if(customPanel){
+      customPanel.classList.toggle('hide', radio.value !== 'custom');
+    }
+  });
+});
+
+if($('compress-custom-dpi')){
+  $('compress-custom-dpi').oninput = e => {
+    if($('compress-dpi-val')) $('compress-dpi-val').textContent = e.target.value + ' DPI';
+  };
+}
+if($('compress-custom-quality')){
+  $('compress-custom-quality').oninput = e => {
+    if($('compress-quality-val')) $('compress-quality-val').textContent = e.target.value + '%';
+  };
+}
+
+// ============================================================================
+// SECTION 37: ANNOTATIONS SUMMARY & MARKDOWN / TEXT EXPORT
+// ============================================================================
+
+function generateAnnotationsMarkdown(){
+  const title = (name || 'Document').replace(/\.pdf$/i, '');
+  const pages = Object.keys(ann).filter(k => ann[k] && ann[k].length).map(Number).sort((a,b) => a - b);
+  
+  let md = `# Annotations Summary: ${title}\n`;
+  md += `*Exported from Folix - A FloppersBlop Product on ${new Date().toLocaleString()}*\n\n`;
+  md += `**Document Name**: \`${name || 'document.pdf'}\`  \n`;
+  md += `**Total Pages**: ${pdf ? pdf.numPages : 1}  \n`;
+  md += `**Total Annotations**: ${pages.reduce((acc, pi) => acc + (ann[pi] || []).length, 0)}\n\n`;
+  md += `---\n\n`;
+
+  if (!pages.length) {
+    md += `*No annotations in this document.*\n`;
+    return md;
+  }
+
+  pages.forEach(pi => {
+    md += `### Page ${pi + 1}\n\n`;
+    (ann[pi] || []).forEach(a => {
+      if (a.t === 'note') {
+        md += `- **[Note]**: ${a.s || ''}\n`;
+      } else if (a.t === 'hl') {
+        md += `- **[Highlight]**: "${a.txt || 'Selected text'}"\n`;
+      } else if (a.t === 'redact') {
+        md += `- **[Redaction]**: Sanitized area [x: ${Math.round(a.x)}, y: ${Math.round(a.y)}, w: ${Math.round(a.w)}, h: ${Math.round(a.h)}]\n`;
+      } else if (a.t === 'text') {
+        md += `- **[Text]**: "${a.s || ''}"\n`;
+      } else if (a.t === 'sig') {
+        md += `- **[Signature]**: Placed signature at [x: ${Math.round(a.x)}, y: ${Math.round(a.y)}]\n`;
+      } else {
+        md += `- **[Drawing]**: Ink stroke (${a.c || 'pen'})\n`;
+      }
+    });
+    md += `\n`;
+  });
+
+  return md;
+}
+
+function exportAnnotationsMarkdown(){
+  if(!pdf) return msg('Open a PDF document first');
+  const md = generateAnnotationsMarkdown();
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const filename = (name || 'document').replace(/\.pdf$/i, '') + '-annotations.md';
+  downloadAny(blob, filename);
+  msg('Annotations exported as Markdown (.md)');
+}
+
+function exportAnnotationsText(){
+  if(!pdf) return msg('Open a PDF document first');
+  const md = generateAnnotationsMarkdown();
+  const txt = md.replace(/[#*`]/g, '');
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const filename = (name || 'document').replace(/\.pdf$/i, '') + '-annotations.txt';
+  downloadAny(blob, filename);
+  msg('Annotations exported as Plain Text (.txt)');
+}
+
+function copyAnnotationsSummary(){
+  if(!pdf) return msg('Open a PDF document first');
+  const md = generateAnnotationsMarkdown();
+  navigator.clipboard.writeText(md).then(() => {
+    msg('Annotations summary copied to clipboard!');
+  }).catch(() => {
+    msg('Clipboard access denied');
+  });
+}
+
+document.querySelectorAll('.ann-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setAnnFilter(btn.dataset.filter);
+  });
+});
+
+if($('ann-export-md')) $('ann-export-md').onclick = exportAnnotationsMarkdown;
+if($('ann-export-txt')) $('ann-export-txt').onclick = exportAnnotationsText;
+if($('ann-copy-all')) $('ann-copy-all').onclick = copyAnnotationsSummary;
+
 // Expose internal services to window.Folix for modular extensions like create.js
 window.Folix = Object.assign(window.Folix || {}, {
   $,
   modal,
   msg,
   openData,
+  syncRoute,
+  restoreIdleRoute,
   downloadAny,
   ensurePdfLib,
   ptOpenFromImages,
   ptAddImages,
   openCreatePdfDialog,
-  openWordStudio
+  openWordStudio,
+  openDocProps,
+  openProtectModal,
+  openRedactDialogOrTool,
+  openCommandPalette,
+  startPresentation,
+  exitPresentation,
+  togglePresentation,
+  startSnipOcrTool,
+  openCompressModal,
+  exportAnnotationsMarkdown,
+  exportAnnotationsText
+});
+
+async function openRecentByName(targetName){
+  if(!recentOn||!targetName)return false;
+  try{
+    const list=(await idbReq('readonly',s=>s.getAll()))||[];
+    list.sort((a,b)=>b.t-a.t);
+    const hit=list.find(r=>r.name===targetName)||list.find(r=>String(r.name||'').toLowerCase()===targetName.toLowerCase());
+    if(hit&&hit.blob){
+      await openData(new Uint8Array(await hit.blob.arrayBuffer()),hit.name);
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+async function applyRouteFromUrl(){
+  const {kind,label}=parseRouteHash(location.hash);
+  const wm=$('word-modal');
+  if(kind==='word-studio'){
+    if(ptd&&ptd.open)ptd.close();
+    if(wm&&!wm.open&&window.FolixCreate&&window.FolixCreate.openWordStudio){
+      window.FolixCreate.openWordStudio(label||'');
+    }
+    return;
+  }
+  if(kind==='pdf'&&label){
+    if(wm&&wm.open)wm.close();
+    if(ptd&&ptd.open)ptd.close();
+    if(!pdf||name!==label){
+      const ok=await openRecentByName(label);
+      if(!ok&&!pdf)restoreIdleRoute({push:false});
+    }
+    return;
+  }
+  if(wm&&wm.open)wm.close();
+  if(ptd&&ptd.open)ptd.close();
+  if(pdf)closeDoc();
+}
+
+window.addEventListener('popstate',()=>{
+  _routeFromPop=true;
+  Promise.resolve(applyRouteFromUrl()).finally(()=>{_routeFromPop=false;});
 });
 
 initTopMenus();
 initSidebarResize();
 initScreenTapToggle();
 initDialogBackdropDismiss();
+
+if(!u&&!/[?&]shared=1/.test(location.search)&&location.hash){
+  setTimeout(()=>{
+    _routeFromPop=true;
+    Promise.resolve(applyRouteFromUrl()).finally(()=>{_routeFromPop=false;});
+  },0);
+}
 
 })();

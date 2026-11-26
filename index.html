@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Folix PDF Viewer - Single-Page Application (SPA) Shell
+  Folix - A FloppersBlop Product - Single-Page Application (SPA) Shell
   A lightweight, private, client-side PDF viewer and annotation workspace.
   Features:
   - Mozilla PDF.js rendering engine with lazy virtual scrolling
@@ -11,19 +11,84 @@
   - Multi-page manipulation (reordering, rotation, deletion, merging)
   - PWA offline caching and Web Share Target integration
 -->
-<html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.mymemory.translated.net blob:; worker-src 'self' blob:; frame-ancestors 'none'"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Folix PDF Viewer</title><meta name="theme-color" content="#e8600a">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Folix">
+<html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.mymemory.translated.net blob:; worker-src 'self' blob:"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Folix - A FloppersBlop Product</title><meta name="theme-color" content="#e8600a">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Folix - A FloppersBlop Product">
+<meta name="title" content="Folix - A FloppersBlop Product">
+<meta name="description" content="Fast, private, 100% on-device PDF viewer, MS Word-style document creator, vector annotator, password encryptor, and redaction suite. Zero server uploads.">
+<meta name="keywords" content="PDF viewer, private PDF, create PDF, MS Word style, on-device OCR, PDF redaction, PDF encryption, FloppersBlop, Yash Arya">
+<meta name="author" content="Yash Arya">
+<link rel="canonical" href="https://yash29xd.github.io/folix-modern/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Folix - A FloppersBlop Product">
+<meta property="og:url" content="https://yash29xd.github.io/folix-modern/">
+<meta property="og:title" content="Folix - A FloppersBlop Product">
+<meta property="og:description" content="Fast, private, 100% on-device PDF viewer, MS Word-style document creator, vector annotator, password encryptor, and redaction suite. Zero server uploads.">
+<meta property="og:image" content="https://yash29xd.github.io/folix-modern/assets/social-preview.png">
+<meta property="og:image:secure_url" content="https://yash29xd.github.io/folix-modern/assets/social-preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Folix - A FloppersBlop Product">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://yash29xd.github.io/folix-modern/">
+<meta name="twitter:title" content="Folix - A FloppersBlop Product">
+<meta name="twitter:description" content="Fast, private, 100% on-device PDF viewer, MS Word-style document creator, vector annotator, password encryptor, and redaction suite. Zero server uploads.">
+<meta name="twitter:image" content="https://yash29xd.github.io/folix-modern/assets/social-preview.png">
 
 <script>try{var t=localStorage.getItem('folix.theme');if(t==='auto'){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=d?'dark-ui':'light'}else if(t==='dark'||t==='dark-ui'||t==='sepia'||t==='light')document.documentElement.dataset.theme=t;else if(localStorage.getItem('folix.dark')==='1')document.documentElement.dataset.theme='dark-ui'}catch(e){}</script>
-<link rel="stylesheet" href="styles.css?v=3.3">
-<link rel="stylesheet" href="create.css?v=1.2"></head>
+<link rel="stylesheet" href="styles.css?v=1.3.8">
+<link rel="stylesheet" href="create.css?v=1.3.8">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Folix - A FloppersBlop Product",
+  "alternateName": "Folix PDF Viewer",
+  "url": "https://yash29xd.github.io/folix-modern/",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "PDF Viewer & Document Workspace",
+  "operatingSystem": "Web Browser, Windows, macOS, Linux, ChromeOS, Android, iOS",
+  "softwareVersion": "1.3.0",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "description": "Fast, private, 100% on-device PDF viewer, MS Word-style document creator, vector annotator, password encryptor, compressor, on-device OCR, and permanent redaction suite. Zero server uploads.",
+  "screenshot": "https://yash29xd.github.io/folix-modern/assets/social-preview.png",
+  "image": "https://yash29xd.github.io/folix-modern/assets/icon-512.png",
+  "featureList": [
+    "100% client-side PDF viewing with zero server uploads",
+    "MS Word-style document creator (Word Studio) and Image-to-PDF",
+    "Vector annotations, highlights, sticky notes, and digital signatures",
+    "On-device WebAssembly Tesseract.js OCR and Searchable PDF export",
+    "Permanent PDF redaction and sanitization",
+    "Client-side RC4 128-bit password encryption and compression",
+    "Page reordering, rotation, extraction, and PDF merging",
+    "Offline Progressive Web App (PWA)"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Yash Arya",
+    "url": "https://github.com/Yash29xd"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "FloppersBlop",
+    "url": "https://yash29xd.github.io/floppersblop/"
+  }
+}
+</script>
+</head>
 <body class="app">
 <div id="chrome">
-<div class="ticker" aria-hidden="true"><div class="tk"><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span><span>FOLIX ★ PDF VIEWER ★ A FLOPPERSBLOP PRODUCT ★ PRIVATE ★ NO UPLOADS ★ FAST ★ FREE ★</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="tk"><span>Folix - A FloppersBlop Product &middot; Browser-local PDF workspace &middot; Zero server uploads</span></div></div>
 <header class="top">
 <div class="top-left">
-<a class="brand" href="index.html"><img src="assets/icon-192.png" alt=""><b>Folix</b></a>
+<a class="brand" href="index.html"><img src="assets/icon-192.png" alt=""><b>Folix</b> <span class="brand-sub">- A FloppersBlop Product</span></a>
 <nav class="menu-bar" id="top-menus" aria-label="Main menu">
   <div class="menu-item" data-menu="file">
     <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false">File <span class="arr">&#9662;</span></button>
@@ -37,6 +102,11 @@
       <button type="button" data-action="ocrpdf"><img class="ic" src="assets/icons/download.svg" alt=""><span>Download Searchable PDF</span></button>
       <button type="button" data-action="png"><img class="ic" src="assets/icons/image.svg" alt=""><span>Export page as PNG</span></button>
       <button type="button" data-action="pr"><img class="ic" src="assets/icons/print.svg" alt=""><span>Print…</span><kbd>Ctrl+P</kbd></button>
+      <hr>
+      <button type="button" data-action="props"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>Document Properties…</span><kbd>Ctrl+D</kbd></button>
+      <button type="button" data-action="protect"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Protect / Encrypt PDF…</span></button>
+      <button type="button" data-action="redact-menu"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor"/><path d="M7 7h10M7 12h10M7 17h10" stroke="var(--w)" stroke-width="1.5"/></svg><span>Redact &amp; Sanitize PDF…</span><kbd>Shift+R</kbd></button>
+      <button type="button" data-action="compress"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M4 14h6m-6 0l3-3m-3 3l3 3M20 10h-6m6 0l-3-3m3 3l-3 3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg><span>Compress &amp; Optimize PDF…</span></button>
       <hr>
       <button type="button" data-action="close"><img class="ic" src="assets/icons/close.svg" alt=""><span>Close document</span></button>
     </div>
@@ -64,6 +134,7 @@
       <button type="button" data-action="trim"><img class="ic" src="assets/icons/trim.svg" alt=""><span>Fit content (trim margins)</span><kbd>C</kbd></button>
       <hr>
       <button type="button" data-action="two"><img class="ic" src="assets/icons/two-page.svg" alt=""><span>Two-page view</span><kbd>2</kbd></button>
+      <button type="button" data-action="presentation"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Presentation mode (Slideshow)</span><kbd>F5</kbd></button>
       <button type="button" data-action="spotb"><img class="ic" src="assets/icons/spotlight.svg" alt=""><span>Spotlight night reading</span><kbd>L</kbd></button>
       <button type="button" data-action="dark"><img class="ic" src="assets/icons/contrast.svg" alt=""><span>Dark reading mode</span></button>
       <button type="button" data-action="fs"><img class="ic" src="assets/icons/fullscreen.svg" alt=""><span>Fullscreen</span></button>
@@ -73,7 +144,13 @@
     <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false">Tools <span class="arr">&#9662;</span></button>
     <div class="menu-dropdown">
       <button type="button" data-action="ocrb"><img class="ic" src="assets/icons/ocr.svg" alt=""><span>Text recognition (OCR)…</span><kbd>O</kbd></button>
+      <button type="button" data-action="snip-ocr"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3"/><circle cx="12" cy="12" r="3"/></svg><span>Snip OCR (Crop to OCR)</span></button>
+      <button type="button" data-action="cmd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8l4 4-4 4M12 16h6"/></svg><span>Command Palette…</span><kbd>Ctrl+K</kbd></button>
       <button type="button" data-action="tts"><img class="ic" src="assets/icons/speaker.svg" alt=""><span>Read aloud (Text-to-Speech)</span><kbd>V</kbd></button>
+      <hr>
+      <button type="button" data-action="props"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>Document Properties &amp; Metadata…</span><kbd>Ctrl+D</kbd></button>
+      <button type="button" data-action="protect"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Protect &amp; Encrypt PDF…</span></button>
+      <button type="button" data-action="redact-menu"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor"/><path d="M7 7h10M7 12h10M7 17h10" stroke="var(--w)" stroke-width="1.5"/></svg><span>Redact &amp; Sanitize PDF…</span><kbd>Shift+R</kbd></button>
       <hr>
       <button type="button" data-action="share"><img class="ic" src="assets/icons/share.svg" alt=""><span>Share PDF</span></button>
       <button type="button" data-action="rclr"><img class="ic" src="assets/icons/eraser.svg" alt=""><span>Clear recent files</span></button>
@@ -95,6 +172,7 @@
   <div class="menu-item" data-menu="help">
     <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false">Help <span class="arr">&#9662;</span></button>
     <div class="menu-dropdown">
+      <button type="button" data-action="cmd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8l4 4-4 4M12 16h6"/></svg><span>Command Palette</span><kbd>Ctrl+K</kbd></button>
       <button type="button" data-action="hk"><img class="ic" src="assets/icons/note.svg" alt=""><span>Keyboard shortcuts</span><kbd>?</kbd></button>
       <a href="faq.html"><span>FAQ</span></a>
       <a href="about.html"><span>About Folix</span></a>
@@ -115,27 +193,27 @@
       </div>
       <div class="theme-options">
         <button type="button" class="theme-opt" data-theme-val="light">
-          <span class="theme-opt-icon">&#9728;</span>
+          <span class="theme-opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
           <span class="theme-opt-label">Light</span>
           <span class="theme-opt-radio"></span>
         </button>
         <button type="button" class="theme-opt" data-theme-val="dark-ui">
-          <span class="theme-opt-icon">&#9790;</span>
+          <span class="theme-opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span>
           <span class="theme-opt-label">Dark UI (Light PDF)</span>
           <span class="theme-opt-radio"></span>
         </button>
         <button type="button" class="theme-opt" data-theme-val="dark">
-          <span class="theme-opt-icon">&#9681;</span>
+          <span class="theme-opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></span>
           <span class="theme-opt-label">Dark (Invert PDF)</span>
           <span class="theme-opt-radio"></span>
         </button>
         <button type="button" class="theme-opt" data-theme-val="auto">
-          <span class="theme-opt-icon">&#128187;</span>
+          <span class="theme-opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
           <span class="theme-opt-label">Auto (System)</span>
           <span class="theme-opt-radio"></span>
         </button>
         <button type="button" class="theme-opt" data-theme-val="sepia">
-          <span class="theme-opt-icon">&#128220;</span>
+          <span class="theme-opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span>
           <span class="theme-opt-label">Sepia</span>
           <span class="theme-opt-radio"></span>
         </button>
@@ -154,6 +232,9 @@
       <button type="button" class="nav-btn" data-action="ocrb"><img class="ic" src="assets/icons/ocr.svg" alt=""><span>OCR Text</span></button>
       <button type="button" class="nav-btn" data-action="trdoc"><img class="ic" src="assets/icons/translate.svg" alt=""><span>Translate</span></button>
       <button type="button" class="nav-btn" data-action="tts"><img class="ic" src="assets/icons/speaker.svg" alt=""><span>Read Aloud</span></button>
+      <button type="button" class="nav-btn" data-action="props"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>Properties</span></button>
+      <button type="button" class="nav-btn" data-action="protect"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Protect</span></button>
+      <button type="button" class="nav-btn" data-action="redact-menu"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor"/><path d="M7 7h10M7 12h10M7 17h10" stroke="var(--w)" stroke-width="1.5"/></svg><span>Redact</span></button>
       <button type="button" class="nav-btn" data-action="share"><img class="ic" src="assets/icons/share.svg" alt=""><span>Share PDF</span></button>
     </div>
     <div class="nav-section-title" style="margin-top:6px">Site Pages</div>
@@ -178,7 +259,7 @@
 <div class="grp" id="g-zoom"><button id="zo" aria-label="Zoom out" disabled><img src="assets/icons/zoom-out.svg" alt=""></button><span id="zl">100%</span><button id="zi" aria-label="Zoom in" disabled><img src="assets/icons/zoom-in.svg" alt=""></button><button id="fit" aria-label="Fit width" disabled><img src="assets/icons/fit-width.svg" alt=""></button></div>
 <div class="grp" id="g-view"><button id="rot" aria-label="Rotate page" disabled><img src="assets/icons/rotate.svg" alt=""></button><button id="spotb" aria-label="Spotlight reading mode" aria-pressed="false" disabled><img src="assets/icons/spotlight.svg" alt=""></button><button id="fs" aria-label="Fullscreen"><img src="assets/icons/fullscreen.svg" alt=""></button></div>
 <button id="ann" aria-label="Annotate" aria-pressed="false" disabled><img src="assets/icons/pen.svg" alt=""><span>NOTES</span></button>
-<div class="grp" id="g-search"><img width="22" height="22" src="assets/icons/search.svg" alt=""><input id="q" type="search" placeholder="Search in document…" aria-label="Search text" disabled><span id="cnt" role="button" tabindex="0" title="Show all results"></span><button id="sprev" aria-label="Previous match" disabled><img src="assets/icons/prev.svg" alt=""></button><button id="snext" aria-label="Next match" disabled><img src="assets/icons/next.svg" alt=""></button></div>
+<div class="grp" id="g-search"><img width="22" height="22" src="assets/icons/search.svg" alt=""><input id="q" type="search" placeholder="Search" aria-label="Search text" disabled><span id="cnt" role="button" tabindex="0" title="Show all results"></span><button id="sprev" aria-label="Previous match" disabled><img src="assets/icons/prev.svg" alt=""></button><button id="snext" aria-label="Next match" disabled><img src="assets/icons/next.svg" alt=""></button></div>
 <button id="share" aria-label="Share PDF" disabled><img src="assets/icons/share.svg" alt=""><span>SHARE</span></button>
 <button id="pin" class="on" aria-pressed="true" aria-label="Toggle top bar: pinned or auto-hide"><img src="assets/icons/pin.svg" alt=""><span id="pinl">PINNED</span></button>
 
@@ -197,15 +278,16 @@
 <button id="moreb" class="hide" aria-label="More tools" aria-expanded="false"><img src="assets/icons/more.svg" alt=""><span>MORE</span></button>
 </div>
 <div class="abar hide" id="abar" role="toolbar" aria-label="Annotation tools">
-<div class="grp"><button data-tool="pen" aria-pressed="false" aria-label="Pen"><img src="assets/icons/pen.svg" alt=""><span>Pen</span></button><button data-tool="mk" aria-pressed="false" aria-label="Marker"><img src="assets/icons/marker.svg" alt=""><span>Marker</span></button><button data-tool="hl" aria-pressed="false" aria-label="Highlight"><img src="assets/icons/highlight.svg" alt=""><span>Highlight</span></button><button data-tool="tx" aria-pressed="false" aria-label="Text"><img src="assets/icons/textbox.svg" alt=""><span>Text</span></button><button data-tool="note" aria-pressed="false" aria-label="Note"><img src="assets/icons/note.svg" alt=""><span>Note</span></button><button data-tool="sig" aria-pressed="false" aria-label="Sign"><img src="assets/icons/signature.svg" alt=""><span>Sign</span></button><button data-tool="er" aria-pressed="false" aria-label="Eraser"><img src="assets/icons/eraser.svg" alt=""><span>Eraser</span></button></div>
+<div class="grp"><button data-tool="pen" aria-pressed="false" aria-label="Pen"><img src="assets/icons/pen.svg" alt=""><span>Pen</span></button><button data-tool="mk" aria-pressed="false" aria-label="Marker"><img src="assets/icons/marker.svg" alt=""><span>Marker</span></button><button data-tool="hl" aria-pressed="false" aria-label="Highlight"><img src="assets/icons/highlight.svg" alt=""><span>Highlight</span></button><button data-tool="tx" aria-pressed="false" aria-label="Text"><img src="assets/icons/textbox.svg" alt=""><span>Text</span></button><button data-tool="note" aria-pressed="false" aria-label="Note"><img src="assets/icons/note.svg" alt=""><span>Note</span></button><button data-tool="sig" aria-pressed="false" aria-label="Sign"><img src="assets/icons/signature.svg" alt=""><span>Sign</span></button><button data-tool="redact" aria-pressed="false" aria-label="Redact" title="Redact confidential text &amp; areas (Irreversible)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor"/><path d="M7 7h10M7 12h10M7 17h10" stroke="var(--w)" stroke-width="1.5"/></svg><span>Redact</span></button><button data-tool="snip-ocr" aria-pressed="false" aria-label="Snip OCR" title="Area / Snip OCR (Crop page region to recognize text)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3"/><circle cx="12" cy="12" r="2.5"/></svg><span>Snip OCR</span></button><button data-tool="er" aria-pressed="false" aria-label="Eraser"><img src="assets/icons/eraser.svg" alt=""><span>Eraser</span></button></div>
 <div class="grp" id="sws"><button class="sw" data-c="#0a0a0a" style="background:#0a0a0a" aria-label="Colour black"></button><button class="sw" data-c="#ff3b30" style="background:#ff3b30" aria-label="Colour red"></button><button class="sw" data-c="#ff6a00" style="background:#ff6a00" aria-label="Colour orange"></button><button class="sw" data-c="#ffd60a" style="background:#ffd60a" aria-label="Colour yellow"></button><button class="sw" data-c="#2bd96b" style="background:#2bd96b" aria-label="Colour green"></button><button class="sw" data-c="#1e90ff" style="background:#1e90ff" aria-label="Colour blue"></button></div>
 <div class="grp" id="wds"><button data-w="2" aria-label="Thin">S</button><button data-w="4" aria-label="Medium">M</button><button data-w="8" aria-label="Thick">L</button></div>
 <div class="grp"><button id="undo" aria-label="Undo" disabled><img src="assets/icons/undo.svg" alt=""></button><button id="redo" aria-label="Redo" disabled><img src="assets/icons/redo.svg" alt=""></button></div>
 <button id="asave" aria-label="Save annotated PDF"><img src="assets/icons/download.svg" alt=""><span>SAVE PDF</span></button>
+<button type="button" id="redact-bar-act" class="redact-apply-bar hide" title="Permanently burn blackouts and sanitize document"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><span id="redact-bar-lbl">Apply Redactions</span></button>
 </div>
 </div>
 <div class="work" id="work">
-<aside id="side" data-tab="pages" aria-label="Pages and outline"><div class="tabs"><button id="tabp" class="on">Pages</button><button id="tabo">Outline</button><button id="tabq">Find</button><button id="tabn">Notes</button><button id="tabt">Translate</button></div><div id="thumbs" class="panel"></div><div id="outline" class="panel"></div><div id="results" class="panel"></div><div id="notes" class="panel"></div><div id="trans" class="panel"><div class="trc"><label>From<select id="trsrc"><option value="auto">Auto-detect</option><option value="en">English</option><option value="it">Italiano</option><option value="hi">हिन्दी (Hindi)</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ar">العربية</option></select></label><label>To<select id="trtgt"><option value="en">English</option><option value="it">Italiano</option><option value="hi">हिन्दी (Hindi)</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ar">العربية</option></select></label></div>
+<aside id="side" data-tab="pages" aria-label="Pages and outline"><div class="tabs"><button id="tabp" class="on">Pages</button><button id="tabo">Outline</button><button id="tabq">Find</button><button id="tabn">Notes</button><button id="tabt">Translate</button></div><div id="thumbs" class="panel"></div><div id="outline" class="panel"></div><div id="results" class="panel"></div><div id="notes" class="panel"><div class="ann-panel-hdr"><div class="ann-filter-pills"><button type="button" class="ann-pill on" data-filter="all">All <span id="ann-cnt-all">0</span></button><button type="button" class="ann-pill" data-filter="note">Notes <span id="ann-cnt-notes">0</span></button><button type="button" class="ann-pill" data-filter="hl">Highlights <span id="ann-cnt-hl">0</span></button><button type="button" class="ann-pill" data-filter="redact">Redactions <span id="ann-cnt-redact">0</span></button></div><div class="ann-export-btns"><button type="button" id="ann-export-md" class="btn btn-xs" title="Export annotations as GitHub-flavored Markdown (.md)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>.md</span></button><button type="button" id="ann-export-txt" class="btn btn-xs" title="Export as Plain Text (.txt)"><span>.txt</span></button><button type="button" id="ann-copy-all" class="btn btn-xs" title="Copy annotations summary"><span>Copy</span></button></div></div><div id="notes-content"></div></div><div id="trans" class="panel"><div class="trc"><label>From<select id="trsrc"><option value="auto">Auto-detect</option><option value="en">English</option><option value="it">Italiano</option><option value="hi">हिन्दी (Hindi)</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ar">العربية</option></select></label><label>To<select id="trtgt"><option value="en">English</option><option value="it">Italiano</option><option value="hi">हिन्दी (Hindi)</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ru">Русский</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ar">العربية</option></select></label></div>
 <p id="trstat" class="none">Translate the whole PDF, page by page. On Chrome for desktop it runs on your device.</p><div id="tract" class="trb hide"></div>
 <div class="trb"><button id="trdoc" type="button" class="pri">Translate whole document</button><button id="trpage" type="button">This page</button><button id="trstop" type="button" class="hide">Stop</button></div>
 <div id="trprog" class="hide"><div id="trbar"></div></div>
@@ -216,25 +298,113 @@
 <div id="side-splitter" class="side-splitter" role="separator" aria-orientation="vertical" title="Drag to resize"><div class="splitter-handle"></div><div class="splitter-tip">Drag to resize</div></div>
 <main id="main"><div id="pages"></div>
 <div id="empty">
-<section class="hero"><img class="lockup l" src="assets/folix-lockup.png" alt="Folix PDF Viewer"><img class="lockup d" src="assets/folix-lockup-dark.png" alt="" aria-hidden="true">
-<div class="copy"><h1>Drop a <em>PDF.</em> Read it.</h1><p>Private, fast, no uploads. Your file never leaves your browser.</p><div class="hero-actions"><label class="btn pri" for="file" tabindex="-1"><img src="assets/icons/open.svg" alt=""><span>Open a PDF</span></label> <button id="btn-create-pdf" class="btn btn-create" type="button"><svg class="ic" width="18" height="18" style="width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg><span>Create PDF</span></button> <button id="install" class="btn hide" type="button"><img src="assets/icons/download.svg" alt=""><span>Install app</span></button></div>
-<button id="hkb2" class="lnk" type="button">Keyboard shortcuts (?)</button></div>
-<div class="pill"><img class="l" src="assets/floppersblop-product.png" alt="FloppersBlop Product"><img class="d" src="assets/floppersblop-product-dark.png" alt="" aria-hidden="true"></div></section>
-<section id="recent" class="recent hide" aria-label="Recent files"><div class="rh"><h2>Recent</h2><button id="rclr" class="lnk" type="button">Clear</button></div><div id="rgrid"></div><p class="rnote">Recent files are kept only in this browser.</p></section>
-<footer><nav class="nav" aria-label="Site"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="copyright.html">Copyright</a><button type="button" class="thm-f" data-theme-toggle="text"></button></nav><div>&copy; <span data-cfg="year"></span> <a href="https://yash29xd.github.io/floppersblop/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;font-weight:700"><span data-cfg="owner"></span></a> &middot; v<span data-cfg="version"></span></div></footer></div></main>
+<section class="hero fx-appear" style="--d:0ms">
+  <div class="copy">
+    <p class="hero-kicker">On-device PDF workspace &middot; Zero server uploads</p>
+    <h1 class="hero-title">Drop a PDF, <span>read it</span></h1>
+    <p class="hero-sub">Render, annotate, compose, encrypt, OCR, and permanently redact documents directly inside your browser</p>
+    <div class="hero-actions">
+      <label class="btn pri" for="file" tabindex="0" id="openl-hero">
+        <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/></svg>
+        <span>Open PDF</span>
+      </label>
+      <button id="btn-create-pdf" class="btn btn-create" type="button">
+        <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span>Create PDF</span>
+      </button>
+      <button id="install" class="btn hide" type="button"><img src="assets/icons/download.svg" alt=""><span>Install app</span></button>
+    </div>
+    <div class="hero-links">
+      <button type="button" class="lnk lnk-pill" data-fx-action="cmd">Command palette <kbd>Ctrl+K</kbd></button>
+      <button id="hkb2" class="lnk lnk-pill" type="button">Shortcuts <kbd>?</kbd></button>
+    </div>
+    <dl class="hero-metrics" aria-label="Architecture guarantees">
+      <div class="metric-item"><dt>Processing</dt><dd>100% browser sandbox</dd></div>
+      <div class="metric-item"><dt>Security</dt><dd>128-bit RC4 &amp; 2.5&times; redact</dd></div>
+      <div class="metric-item"><dt>Network</dt><dd>0 bytes uploaded</dd></div>
+    </dl>
+  </div>
+  <div class="hero-visual fx-appear" style="--d:60ms">
+    <div class="mark">
+      <img class="lockup l" src="assets/folix-lockup.png" alt="Folix PDF Viewer">
+      <img class="lockup d" src="assets/folix-lockup-dark.png" alt="" aria-hidden="true">
+      <a class="pill" href="https://yash29xd.github.io/floppersblop/" target="_blank" rel="noopener"><img class="l" src="assets/floppersblop-product.png" alt="FloppersBlop Product"><img class="d" src="assets/floppersblop-product-dark.png" alt="" aria-hidden="true"></a>
+    </div>
+  </div>
+</section>
+
+<section class="studio-sec fx-appear" style="--d:100ms" aria-label="Workspace tools">
+  <div class="studio-hdr">
+    <h2>Create or run a workflow</h2>
+    <span class="studio-hint">Runs locally in browser memory</span>
+  </div>
+  <div class="studio-featured">
+    <button type="button" class="studio-card" data-fx-action="word-studio">
+      <div class="studio-card-top">
+        <span class="studio-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        <span class="studio-meta">A4 &middot; pdf-lib</span>
+      </div>
+      <h3>Word Studio</h3>
+      <p>Write formatted documents with headings, tables, and images, then export a 2&times; PDF</p>
+      <span class="studio-action">Open Word Studio &rarr;</span>
+    </button>
+    <button type="button" class="studio-card" data-fx-action="img-pdf">
+      <div class="studio-card-top">
+        <span class="studio-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
+        <span class="studio-meta">PNG &middot; JPG &middot; WebP</span>
+      </div>
+      <h3>Images to PDF</h3>
+      <p>Organize, rotate, reorder, and compile scanned photos into a single PDF document</p>
+      <span class="studio-action">Select images &rarr;</span>
+    </button>
+  </div>
+  <div class="utility-strip">
+    <button type="button" class="utility-item" data-fx-action="cmd">
+      <div class="utility-head">
+        <span class="utility-title">Command palette</span>
+        <kbd>Ctrl+K</kbd>
+      </div>
+      <span class="utility-desc">Search encryption, compression, OCR, and view modes</span>
+    </button>
+    <button type="button" class="utility-item" data-fx-action="open">
+      <div class="utility-head">
+        <span class="utility-title">Redact &amp; encrypt</span>
+        <span class="utility-meta">2.5&times; &middot; RC4</span>
+      </div>
+      <span class="utility-desc">Burn permanent blackouts and lock PDFs with a password</span>
+    </button>
+    <button type="button" class="utility-item" data-fx-action="shortcuts">
+      <div class="utility-head">
+        <span class="utility-title">Slideshow &amp; OCR</span>
+        <kbd>F5</kbd>
+      </div>
+      <span class="utility-desc">Laser pointer presentation mode and offline Tesseract OCR</span>
+    </button>
+    <button type="button" class="utility-item" data-fx-action="theme">
+      <div class="utility-head">
+        <span class="utility-title">Reading theme</span>
+        <span class="utility-meta" id="bento-theme-badge">Light</span>
+      </div>
+      <span class="utility-desc">Cycle Light, Dark UI, Dark Invert, Auto, or Sepia</span>
+    </button>
+  </div>
+</section>
+
+<section id="recent" class="recent hide" aria-label="Recent files"><div class="rh"><h2>Recent</h2><button id="rclr" class="lnk" type="button">Clear</button></div><div id="rgrid"></div><p class="rnote">Recent files are kept only in this browser</p></section>
+<footer><nav class="nav" aria-label="Site"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="architecture.html">Architecture</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="copyright.html">Copyright</a><button type="button" class="thm-f" data-theme-toggle="text"></button></nav><div>&copy; <span data-cfg="year"></span> <a href="https://yash29xd.github.io/floppersblop/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;font-weight:700"><span data-cfg="name"></span></a> &middot; v<span data-cfg="version"></span></div></footer></div></main>
 <div id="spot" class="hide" aria-hidden="true"><i></i></div>
 </div>
 <button id="reveal" class="hide" aria-label="Show top bar">&#9660; BAR</button>
-<dialog id="pw" aria-labelledby="pwt"><form id="pwf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="pwt">Locked PDF</h2></div><button type="button" id="pwx" class="dlg-x" aria-label="Close">&times;</button></div><p id="pwmsg"></p><input id="pwi" type="password" autocomplete="off" aria-label="PDF password" placeholder="PASSWORD"><div class="row"><button type="submit" class="pri" id="pwok">Unlock</button><button type="button" class="btn" onclick="$('pw').close()">Cancel</button></div></form></dialog>
-<dialog id="ntd" aria-labelledby="ntt"><form id="ntf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ntt">Add note</h2></div><button type="button" id="ntc" class="dlg-x" aria-label="Close">&times;</button></div><textarea id="nti" rows="4" maxlength="500" aria-label="Note text" placeholder="TYPE YOUR NOTE"></textarea><div class="row"><button type="submit" class="pri">Add</button><button type="button" class="btn" onclick="$('ntd').close()">Cancel</button></div></form></dialog>
-<dialog id="hk" aria-labelledby="hkt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="hkt">Keyboard shortcuts</h2></div><button type="button" id="hkx" class="dlg-x" aria-label="Close">&times;</button></div><table class="keys"><tr><td><kbd>Ctrl + N</kbd></td><td>Create new PDF (Images / Word editor)</td></tr><tr><td><kbd>← →</kbd></td><td>Previous / next page</td></tr><tr><td><kbd>Home / End</kbd></td><td>First / last page</td></tr><tr><td><kbd>Ctrl + F</kbd></td><td>Search</td></tr><tr><td><kbd>Ctrl + / Ctrl −</kbd></td><td>Zoom in / out</td></tr><tr><td><kbd>W</kbd></td><td>Fit width</td></tr><tr><td><kbd>H</kbd></td><td>Fit height</td></tr><tr><td><kbd>R</kbd></td><td>Rotate</td></tr><tr><td><kbd>T</kbd></td><td>Change theme</td></tr><tr><td><kbd>2</kbd></td><td>Two-page view</td></tr><tr><td><kbd>S</kbd></td><td>Pages sidebar</td></tr><tr><td><kbd>A</kbd></td><td>Annotation tools</td></tr><tr><td><kbd>Ctrl + Z / Y</kbd></td><td>Undo / redo</td></tr><tr><td><kbd>Esc</kbd></td><td>Close menu or tool</td></tr><tr><td><kbd>X</kbd></td><td>Translate document</td></tr><tr><td><kbd>O</kbd></td><td>Text recognition (OCR)</td></tr><tr><td><kbd>G</kbd></td><td>Go to page</td></tr><tr><td><kbd>V</kbd></td><td>Read aloud</td></tr><tr><td><kbd>C</kbd></td><td>Fit content (trim margins)</td></tr><tr><td><kbd>E</kbd></td><td>Page tools</td></tr><tr><td><kbd>L</kbd></td><td>Spotlight night reading</td></tr><tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Spotlight smaller / larger</td></tr><tr><td><kbd>?</kbd></td><td>This help</td></tr></table><div class="row"><button type="button" class="pri" onclick="$('hk').close()">Close</button></div></dialog>
+<dialog id="pw" aria-labelledby="pwt"><form id="pwf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="pwt">Locked PDF</h2></div><button type="button" id="pwx" class="dlg-x" aria-label="Close">&times;</button></div><p id="pwmsg"></p><input id="pwi" type="password" autocomplete="off" aria-label="PDF password" placeholder="PASSWORD"><div class="row"><button type="submit" class="pri" id="pwok">Unlock</button><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button></div></form></dialog>
+<dialog id="ntd" aria-labelledby="ntt"><form id="ntf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ntt">Add note</h2></div><button type="button" id="ntc" class="dlg-x" aria-label="Close">&times;</button></div><textarea id="nti" rows="4" maxlength="500" aria-label="Note text" placeholder="TYPE YOUR NOTE"></textarea><div class="row"><button type="submit" class="pri">Add</button><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button></div></form></dialog>
+<dialog id="hk" aria-labelledby="hkt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="hkt">Keyboard shortcuts</h2></div><button type="button" id="hkx" class="dlg-x" aria-label="Close">&times;</button></div><table class="keys"><tr><td><kbd>Ctrl + K</kbd></td><td>Command palette (fuzzy launcher)</td></tr><tr><td><kbd>F5</kbd></td><td>Presentation mode (Slideshow &amp; Laser)</td></tr><tr><td><kbd>Ctrl + N</kbd></td><td>Create new PDF (Images / Word editor)</td></tr><tr><td><kbd>Ctrl + D</kbd></td><td>Document properties &amp; metadata</td></tr><tr><td><kbd>Shift + R</kbd></td><td>Redact &amp; sanitize mode</td></tr><tr><td><kbd>← →</kbd></td><td>Previous / next page</td></tr><tr><td><kbd>Home / End</kbd></td><td>First / last page</td></tr><tr><td><kbd>Ctrl + F</kbd></td><td>Search</td></tr><tr><td><kbd>Ctrl + / Ctrl −</kbd></td><td>Zoom in / out</td></tr><tr><td><kbd>W</kbd></td><td>Fit width</td></tr><tr><td><kbd>H</kbd></td><td>Fit height</td></tr><tr><td><kbd>R</kbd></td><td>Rotate</td></tr><tr><td><kbd>T</kbd></td><td>Change theme</td></tr><tr><td><kbd>2</kbd></td><td>Two-page view</td></tr><tr><td><kbd>S</kbd></td><td>Pages sidebar</td></tr><tr><td><kbd>A</kbd></td><td>Annotation tools</td></tr><tr><td><kbd>Ctrl + Z / Y</kbd></td><td>Undo / redo</td></tr><tr><td><kbd>Esc</kbd></td><td>Close menu or tool</td></tr><tr><td><kbd>X</kbd></td><td>Translate document</td></tr><tr><td><kbd>O</kbd></td><td>Text recognition (OCR)</td></tr><tr><td><kbd>G</kbd></td><td>Go to page</td></tr><tr><td><kbd>V</kbd></td><td>Read aloud</td></tr><tr><td><kbd>C</kbd></td><td>Fit content (trim margins)</td></tr><tr><td><kbd>E</kbd></td><td>Page tools</td></tr><tr><td><kbd>L</kbd></td><td>Spotlight night reading</td></tr><tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Spotlight smaller / larger</td></tr><tr><td><kbd>?</kbd></td><td>This help</td></tr></table><div class="row"><button type="button" class="pri" onclick="this.closest('dialog').close()">Close</button></div></dialog>
 <dialog id="sgd" aria-labelledby="sgt"><form id="sgf"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="sgt">Signature</h2></div><button type="button" id="sgx" class="dlg-x" aria-label="Close">&times;</button></div>
 <div id="sgsaved" class="hide"><p>Saved signature</p><img id="sgimg" alt="Saved signature"><button type="button" id="sguse" class="pri">Use saved</button><p class="or">OR CREATE A NEW ONE</p></div>
 <div class="tabs2"><button type="button" id="sgtd" class="on">Draw</button><button type="button" id="sgtt">Type</button></div>
 <div id="sgdraw"><canvas id="sgc" width="560" height="200" aria-label="Draw your signature here"></canvas><button type="button" id="sgclr">Clear</button></div>
 <div id="sgtype" class="hide"><input id="sgi" type="text" maxlength="40" placeholder="TYPE YOUR NAME" aria-label="Signature text"><div id="sgprev"></div></div>
 <p id="sgerr" class="err" role="alert"></p>
-<div class="row"><button type="submit" class="pri">Place signature</button><button type="button" class="btn" onclick="$('sgd').close()">Cancel</button></div></form></dialog>
+<div class="row"><button type="submit" class="pri">Place signature</button><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button></div></form></dialog>
 <dialog id="ptd" aria-labelledby="ptt"><div class="dlg-hdr"><div class="dlg-title-wrap"><h2 id="ptt">Page tools</h2></div><button type="button" id="ptx" class="dlg-x" aria-label="Close">&times;</button></div><p id="ptdesc" class="pts">Drag pages to reorder. Rotate, delete or select pages, add pages from another PDF, then apply the changes or save a copy.</p>
 <div class="ptbar"><button type="button" id="ptall">Select all</button><button type="button" id="ptnone">Clear selection</button><label class="btn" for="ptadd">Add pages from a PDF</label><input id="ptadd" type="file" accept="application/pdf,.pdf" class="hide"><label class="btn" for="ptaddimg">Add image as page</label><input id="ptaddimg" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" multiple class="hide"></div>
 <div id="ptg"></div><p id="pterr" class="err" role="alert"></p>
@@ -274,21 +444,68 @@
 </dialog>
 <input id="create-img-input" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" multiple class="hide">
 <!-- MS WORD-STYLE DOCUMENT STUDIO DIALOG -->
-<dialog id="word-modal" class="word-studio" aria-label="Folix Document Editor">
+<dialog id="word-modal" class="word-studio" aria-label="Folix - A FloppersBlop Product Document Editor">
   <div class="word-titlebar">
     <div class="word-tb-left">
-      <div class="word-app-badge" title="Folix Document Editor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <div class="word-app-badge" title="Folix - A FloppersBlop Product Document Editor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
       <input id="word-doc-title" class="word-title-input" type="text" value="Document 1" placeholder="Document Name" aria-label="Document Title">
       <span class="word-tag">Word Studio</span>
+    </div>
+    <div class="word-tb-center">
+      <nav class="word-nav-links" aria-label="Word Studio Navigation">
+        <button type="button" id="word-nav-viewer" class="word-nav-link" title="Return to PDF Viewer">Viewer</button>
+        <a class="word-nav-link" href="about.html">About</a>
+        <a class="word-nav-link" href="faq.html">FAQ</a>
+        <a class="word-nav-link" href="contact.html">Contact</a>
+      </nav>
+      <div class="theme-dropdown-wrap word-theme-wrap">
+        <button type="button" class="word-btn word-theme-btn" id="word-theme-btn" aria-label="Theme settings" aria-haspopup="true" aria-expanded="false" title="Switch Theme (Light / Dark / Dark-UI / Sepia)">
+          <img class="ic" src="assets/icons/contrast.svg" alt="">
+          <span>Theme</span>
+        </button>
+        <div id="word-theme-pop" class="theme-pop word-theme-pop hide" role="dialog" aria-label="Select theme">
+          <div class="theme-pop-header">
+            <span>Theme</span>
+            <button type="button" id="word-theme-pop-close" class="theme-pop-x" aria-label="Close">&times;</button>
+          </div>
+          <div class="theme-options">
+            <button type="button" class="theme-opt" data-theme-val="light">
+              <span class="theme-opt-icon">&#9728;</span>
+              <span class="theme-opt-label">Light</span>
+              <span class="theme-opt-radio"></span>
+            </button>
+            <button type="button" class="theme-opt" data-theme-val="dark-ui">
+              <span class="theme-opt-icon">&#9790;</span>
+              <span class="theme-opt-label">Dark UI (Light PDF)</span>
+              <span class="theme-opt-radio"></span>
+            </button>
+            <button type="button" class="theme-opt" data-theme-val="dark">
+              <span class="theme-opt-icon">&#9681;</span>
+              <span class="theme-opt-label">Dark (Invert PDF)</span>
+              <span class="theme-opt-radio"></span>
+            </button>
+            <button type="button" class="theme-opt" data-theme-val="auto">
+              <span class="theme-opt-icon">&#128187;</span>
+              <span class="theme-opt-label">Auto (System)</span>
+              <span class="theme-opt-radio"></span>
+            </button>
+            <button type="button" class="theme-opt" data-theme-val="sepia">
+              <span class="theme-opt-icon">&#128220;</span>
+              <span class="theme-opt-label">Sepia</span>
+              <span class="theme-opt-radio"></span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="word-tb-right">
       <button type="button" id="word-btn-export" class="word-btn pri" title="Download compiled PDF file">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Export PDF</span>
       </button>
-      <button type="button" id="word-btn-open-viewer" class="word-btn sec" title="Compile and open in Folix Viewer">
+      <button type="button" id="word-btn-open-viewer" class="word-btn sec" title="Compile and open in Folix - A FloppersBlop Product">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>Open in Folix</span>
       </button>
@@ -387,10 +604,10 @@
     <div id="word-tab-insert" class="word-ribbon-panel">
       <div class="word-grp">
         <div class="word-grp-row">
-          <label class="word-tool-btn-labeled" title="Insert photo or image">
+          <label class="word-tool-btn-labeled" title="Insert photo or image (PNG, JPG, WebP)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <span>Picture</span>
-            <input type="file" id="word-insert-img" accept="image/*" class="hide">
+            <input type="file" id="word-insert-img" accept="image/png,image/jpeg,image/jpg,image/webp" class="hide">
           </label>
           <button type="button" id="word-insert-tbl" class="word-tool-btn-labeled" title="Insert grid table">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
@@ -469,8 +686,423 @@
       <button type="button" id="word-zoom-in" class="word-zoom-btn" title="Zoom In">+</button>
     </div>
   </div>
+  <!-- In-Modal Table Builder Dialog -->
+  <div id="word-tbl-dialog" class="word-subdlg hide" role="dialog" aria-modal="true" aria-labelledby="word-tbl-dlg-title">
+    <div class="word-subdlg-card">
+      <div class="word-subdlg-hdr">
+        <h3 id="word-tbl-dlg-title">Insert Table</h3>
+        <button type="button" id="word-tbl-cancel-x" class="theme-pop-x" aria-label="Close">&times;</button>
+      </div>
+      <div class="word-subdlg-body">
+        <label class="word-subdlg-field">
+          <span>Rows</span>
+          <input type="number" id="word-tbl-rows" min="1" max="20" value="3">
+        </label>
+        <label class="word-subdlg-field">
+          <span>Columns</span>
+          <input type="number" id="word-tbl-cols" min="1" max="10" value="3">
+        </label>
+        <label class="word-subdlg-check">
+          <input type="checkbox" id="word-tbl-hdr" checked>
+          <span>Include Header Row</span>
+        </label>
+      </div>
+      <div class="word-subdlg-actions">
+        <button type="button" id="word-tbl-cancel" class="word-btn">Cancel</button>
+        <button type="button" id="word-tbl-confirm" class="word-btn pri">Insert Table</button>
+      </div>
+    </div>
+  </div>
+  <!-- In-Modal Hyperlink Dialog -->
+  <div id="word-link-dialog" class="word-subdlg hide" role="dialog" aria-modal="true" aria-labelledby="word-link-dlg-title">
+    <div class="word-subdlg-card">
+      <div class="word-subdlg-hdr">
+        <h3 id="word-link-dlg-title">Insert Link</h3>
+        <button type="button" id="word-link-cancel-x" class="theme-pop-x" aria-label="Close">&times;</button>
+      </div>
+      <div class="word-subdlg-body">
+        <label class="word-subdlg-field">
+          <span>Text to display</span>
+          <input type="text" id="word-link-text" placeholder="Link text">
+        </label>
+        <label class="word-subdlg-field">
+          <span>URL</span>
+          <input type="url" id="word-link-url" placeholder="https://example.com" value="https://">
+        </label>
+      </div>
+      <div class="word-subdlg-actions">
+        <button type="button" id="word-link-cancel" class="word-btn">Cancel</button>
+        <button type="button" id="word-link-confirm" class="word-btn pri">Insert Link</button>
+      </div>
+    </div>
+  </div>
 </dialog>
 <dialog id="ocrd" aria-labelledby="ocrt"><form id="ocrf" onsubmit="return false"><div class="dlg-hdr"><div class="dlg-title-wrap"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M7 3H5a2 2 0 0 0-2 2v2M17 3h2a2 2 0 0 1 2 2v2M7 21H5a2 2 0 0 1-2-2v-2M17 21h2a2 2 0 0 0 2-2v-2M9 9h6v6H9z"/></svg><h2 id="ocrt">Text Recognition (OCR)</h2></div><button type="button" id="ocrx" class="dlg-x" aria-label="Close">&times;</button></div><p class="pts">Extract text from scanned pages using on-device Tesseract OCR.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><label style="display:grid;gap:4px;font-size:12px;font-weight:600">Language<select id="ocrlang" style="height:36px;border-radius:6px;padding:0 8px;border:1px solid var(--bd);background:var(--w);color:var(--ink)"><option value="ita">Italiano (Offline)</option><option value="eng">English (Offline)</option><option value="ita+eng">Italiano + English (Offline)</option><option value="spa">Español</option><option value="fra">Français</option><option value="deu">Deutsch</option><option value="por">Português</option><option value="rus">Русский</option><option value="chi_sim">中文 (Simplified)</option><option value="jpn">日本語</option><option value="ara">العربية</option></select></label><label style="display:grid;gap:4px;font-size:12px;font-weight:600">Page Scope<select id="ocrscope" style="height:36px;border-radius:6px;padding:0 8px;border:1px solid var(--bd);background:var(--w);color:var(--ink)"><option value="cur">Current Page</option><option value="all">All Pages</option></select></label></div><div class="row" style="margin-bottom:12px;gap:8px"><button type="button" id="ocrrun" class="pri" style="flex:1">Start Recognition</button><button type="button" id="ocrstop" class="hide" style="flex:1">Stop</button></div><div id="ocrprog" class="hide" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span id="ocrstat">Recognizing…</span><span id="ocrpct">0%</span></div><div style="height:6px;background:var(--paper);border-radius:3px;overflow:hidden"><div id="ocrbar" style="height:100%;width:0;background:var(--o);transition:width .2s"></div></div></div><div id="ocrres" class="hide" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><label style="font-size:12px;font-weight:600">Extracted Text</label><span id="ocrwords" style="font-size:11px;opacity:.7"></span></div><textarea id="ocrtxt" rows="8" readonly style="width:100%;border-radius:6px;padding:10px;font:13px/1.4 var(--font-body);resize:vertical;border:1px solid var(--bd);background:var(--paper);color:var(--ink);box-sizing:border-box"></textarea><div class="ptbar" style="margin-top:10px;gap:6px;flex-wrap:wrap"><button type="button" id="ocrpdf" class="pri" title="Download PDF with embedded invisible text layer">Download Searchable PDF</button><button type="button" id="ocrtrans" title="Translate extracted text in the Translate tab">Translate text</button><button type="button" id="ocrcopy">Copy text</button><button type="button" id="ocrdown">Download .txt</button><button type="button" id="ocrspeak">Read aloud</button><button type="button" id="ocrinject" title="Make this scanned page selectable and searchable in the viewer">Make page searchable</button></div></div></form></dialog>
+
+<!-- FOLIX V1.3: Document Properties & Metadata Cleaner Dialog -->
+<dialog id="dlg-props" aria-labelledby="props-title" class="dlg-lg">
+  <form id="props-form" onsubmit="return false">
+    <div class="dlg-hdr">
+      <div class="dlg-title-wrap">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <h2 id="props-title">Document Properties &amp; Metadata</h2>
+      </div>
+      <button type="button" id="props-close" class="dlg-x" aria-label="Close">&times;</button>
+    </div>
+
+    <!-- Document Metrics Summary Grid -->
+    <div class="props-grid-summary">
+      <div class="prop-stat"><span class="lbl">FILE NAME</span><b id="prop-filename" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">FILE SIZE</span><b id="prop-filesize" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">PAGES</span><b id="prop-pages" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">DIMENSIONS</span><b id="prop-dimensions" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">PDF VERSION</span><b id="prop-version" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">SECURITY</span><b id="prop-security" class="val">—</b></div>
+    </div>
+
+    <!-- Metadata Fields -->
+    <div class="props-fields">
+      <div class="props-row">
+        <label for="prop-title-in">Title</label>
+        <input type="text" id="prop-title-in" placeholder="Document title">
+      </div>
+      <div class="props-row">
+        <label for="prop-author-in">Author</label>
+        <input type="text" id="prop-author-in" placeholder="Author name / organization">
+      </div>
+      <div class="props-row">
+        <label for="prop-subject-in">Subject</label>
+        <input type="text" id="prop-subject-in" placeholder="Subject / description">
+      </div>
+      <div class="props-row">
+        <label for="prop-keywords-in">Keywords</label>
+        <input type="text" id="prop-keywords-in" placeholder="Comma-separated keywords">
+      </div>
+      <div class="props-row half">
+        <div>
+          <label>Creator Application</label>
+          <div id="prop-creator-val" class="prop-ro">—</div>
+        </div>
+        <div>
+          <label>PDF Producer</label>
+          <div id="prop-producer-val" class="prop-ro">—</div>
+        </div>
+      </div>
+      <div class="props-row half">
+        <div>
+          <label>Creation Date</label>
+          <div id="prop-created-val" class="prop-ro">—</div>
+        </div>
+        <div>
+          <label>Modified Date</label>
+          <div id="prop-modified-val" class="prop-ro">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Banner -->
+    <div class="props-privacy-box">
+      <div class="props-privacy-info">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div>
+          <b>Privacy Notice:</b> Hidden document metadata may reveal your name, device username, software versions, and edit history.
+        </div>
+      </div>
+      <button type="button" id="props-strip-btn" class="btn btn-strip" title="Strip all author, device, dates, and software metadata">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Sanitize &amp; Strip All Metadata</span>
+      </button>
+    </div>
+
+    <div class="row ptbar" style="margin-top:16px">
+      <button type="button" id="props-save-btn" class="pri">Save Metadata</button>
+      <button type="button" id="props-clean-dl-btn" class="btn">Download Cleaned PDF</button>
+      <button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- FOLIX V1.3: Client-Side PDF Password Protection & Permissions Dialog -->
+<dialog id="dlg-protect" aria-labelledby="protect-title" class="dlg-lg">
+  <form id="protect-form" onsubmit="return false">
+    <div class="dlg-hdr">
+      <div class="dlg-title-wrap">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <h2 id="protect-title">Protect &amp; Encrypt PDF</h2>
+      </div>
+      <button type="button" id="protect-close" class="dlg-x" aria-label="Close">&times;</button>
+    </div>
+    <p class="pts">Encrypt this document with standard 128-bit encryption directly on your device. Anyone opening the file must enter the password.</p>
+
+    <div class="protect-inputs">
+      <label for="protect-pw-open"><b>Document Open Password</b> (Required to open &amp; view)</label>
+      <div class="pw-eye-wrap">
+        <input type="password" id="protect-pw-open" placeholder="ENTER OPEN PASSWORD" autocomplete="new-password" required>
+        <button type="button" class="btn-eye" data-target="protect-pw-open" aria-label="Toggle password visibility"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+
+      <label for="protect-pw-confirm"><b>Confirm Open Password</b></label>
+      <div class="pw-eye-wrap">
+        <input type="password" id="protect-pw-confirm" placeholder="RE-ENTER PASSWORD" autocomplete="new-password" required>
+        <button type="button" class="btn-eye" data-target="protect-pw-confirm" aria-label="Toggle password visibility"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+
+      <div class="protect-adv-toggle">
+        <button type="button" id="protect-adv-btn" class="btn-subtle">
+          <span>Permissions &amp; Owner Password</span> <span class="arr">&#9662;</span>
+        </button>
+      </div>
+
+      <div id="protect-adv-panel" class="protect-adv-panel hide">
+        <label for="protect-pw-owner"><b>Owner / Master Password</b> (Optional; required to change permissions)</label>
+        <div class="pw-eye-wrap">
+          <input type="password" id="protect-pw-owner" placeholder="OPTIONAL OWNER PASSWORD" autocomplete="new-password">
+          <button type="button" class="btn-eye" data-target="protect-pw-owner" aria-label="Toggle password visibility"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+
+        <div class="protect-perms">
+          <div class="perm-title">Allowed User Actions:</div>
+          <label class="perm-cb"><input type="checkbox" id="perm-print" checked> <span>Allow High-Resolution Printing</span></label>
+          <label class="perm-cb"><input type="checkbox" id="perm-copy"> <span>Allow Copying Text &amp; Graphics</span></label>
+          <label class="perm-cb"><input type="checkbox" id="perm-forms" checked> <span>Allow Form Filling &amp; Annotations</span></label>
+          <label class="perm-cb"><input type="checkbox" id="perm-modify"> <span>Allow Document Modification &amp; Assembly</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div id="protect-err" class="alert-err hide"></div>
+
+    <div class="row ptbar" style="margin-top:16px">
+      <button type="button" id="protect-download-btn" class="pri">Encrypt &amp; Download PDF</button>
+      <button type="button" id="protect-view-btn" class="btn">Encrypt &amp; Open in Folix</button>
+      <button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- FOLIX V1.3: Permanent PDF Redaction & Sanitization Dialog -->
+<dialog id="dlg-redact-apply" aria-labelledby="redact-title" class="dlg-lg">
+  <form id="redact-apply-form" onsubmit="return false">
+    <div class="dlg-hdr">
+      <div class="dlg-title-wrap">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor"/><path d="M7 7h10M7 12h10M7 17h10" stroke="var(--w)" stroke-width="1.5"/></svg>
+        <h2 id="redact-title">Permanent PDF Redaction &amp; Sanitization</h2>
+      </div>
+      <button type="button" id="redact-apply-close" class="dlg-x" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="redact-warn-banner">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:#e81123"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <b>Irreversible Sanitization:</b>
+        <p style="margin:4px 0 0">This process burns opaque black blocks into the page image and <b>permanently destroys</b> all underlying text tokens, font descriptors, hidden layers, and search indices on redacted pages.</p>
+      </div>
+    </div>
+
+    <div class="redact-summary-stats">
+      <div id="redact-count-msg" style="font-weight:700;font-size:14px;margin-bottom:8px"></div>
+      <label class="perm-cb">
+        <input type="checkbox" id="redact-strip-meta" checked>
+        <span>Also strip all document metadata (Author, Software, Timestamps) for complete confidentiality</span>
+      </label>
+    </div>
+
+    <div id="redact-prog" class="hide" style="margin:14px 0">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span id="redact-stat">Sanitizing pages…</span>
+        <span id="redact-pct">0%</span>
+      </div>
+      <div style="height:6px;background:var(--paper);border-radius:3px;overflow:hidden">
+        <div id="redact-bar" style="height:100%;width:0;background:#e81123;transition:width .2s"></div>
+      </div>
+    </div>
+
+    <div class="row ptbar" style="margin-top:16px">
+      <button type="button" id="redact-confirm-dl-btn" class="pri btn-redact-act">Sanitize &amp; Download PDF</button>
+      <button type="button" id="redact-confirm-view-btn" class="btn">Sanitize &amp; Open in Viewer</button>
+      <button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- FOLIX V1.3: Presentation Mode HUD & Laser Pointer -->
+<div id="presentation-ctl" class="presentation-hud hide" role="toolbar" aria-label="Presentation controls">
+  <button type="button" id="pres-prev" class="pres-btn" title="Previous Slide (Left Arrow / Page Up)">&#9664;</button>
+  <span id="pres-counter" class="pres-counter">Slide 1 of 1</span>
+  <button type="button" id="pres-next" class="pres-btn" title="Next Slide (Right Arrow / Space / Page Down)">&#9654;</button>
+  <div class="pres-sep"></div>
+  <button type="button" id="pres-laser" class="pres-btn" title="Toggle Laser Pointer (L)">
+    <span class="laser-dot-icon"></span>
+    <span>Laser</span>
+  </button>
+  <button type="button" id="pres-exit" class="pres-btn pres-btn-exit" title="Exit Presentation (Esc)">
+    <span>&times; Exit</span>
+  </button>
+</div>
+<div id="laser-dot" class="laser-dot hide" aria-hidden="true"></div>
+
+<!-- FOLIX V1.3: Command Palette (Ctrl+K / Cmd+K) -->
+<dialog id="dlg-cmd" class="dlg-cmd-palette" aria-label="Command Palette">
+  <div class="cmd-box">
+    <div class="cmd-input-wrap">
+      <svg class="cmd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="cmd-search" class="cmd-input" placeholder="Type a command or search tools, views, actions..." autocomplete="off" spellcheck="false">
+      <kbd class="cmd-esc-hint">ESC</kbd>
+    </div>
+    <div id="cmd-results" class="cmd-results-list" role="listbox"></div>
+    <div class="cmd-footer">
+      <div class="cmd-keys-tip">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>Esc</kbd> close</span>
+      </div>
+      <div id="cmd-count" class="cmd-count">0 commands</div>
+    </div>
+  </div>
+</dialog>
+
+<!-- FOLIX V1.3: Area / Snip OCR Result Dialog -->
+<dialog id="dlg-snip-ocr" aria-labelledby="snip-ocr-title" class="dlg-lg">
+  <div class="dlg-hdr">
+    <div class="dlg-title-wrap">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3"/><circle cx="12" cy="12" r="3"/></svg>
+      <h2 id="snip-ocr-title">Area Text Recognition (Snip OCR)</h2>
+    </div>
+    <button type="button" id="snip-ocr-close" class="dlg-x" aria-label="Close">&times;</button>
+  </div>
+  <div class="snip-ocr-body">
+    <div class="snip-ocr-preview-wrap">
+      <div class="snip-ocr-thumb-box">
+        <canvas id="snip-ocr-canvas" class="snip-ocr-canvas"></canvas>
+      </div>
+      <div class="snip-ocr-meta">
+        <label for="snip-ocr-lang">Language:</label>
+        <select id="snip-ocr-lang" class="snip-select">
+          <option value="eng">English (eng)</option>
+          <option value="ita">Italiano (ita)</option>
+        </select>
+        <button type="button" id="snip-ocr-retry" class="btn btn-xs">Re-scan</button>
+      </div>
+    </div>
+    <div class="snip-ocr-result-wrap">
+      <div id="snip-ocr-status" class="snip-ocr-status">Recognizing text…</div>
+      <textarea id="snip-ocr-out" class="snip-ocr-textarea" rows="6" placeholder="Recognized text will appear here…"></textarea>
+    </div>
+  </div>
+  <div class="row ptbar" style="margin-top:14px">
+    <button type="button" id="snip-ocr-copy" class="pri">Copy Text</button>
+    <button type="button" id="snip-ocr-note" class="btn">Add as Note</button>
+    <button type="button" id="snip-ocr-trans" class="btn">Translate</button>
+    <button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button>
+  </div>
+</dialog>
+
+<!-- FOLIX V1.3: Client-Side PDF Compression & Optimization Dialog -->
+<dialog id="dlg-compress" aria-labelledby="compress-title" class="dlg-lg">
+  <div class="dlg-hdr">
+    <div class="dlg-title-wrap">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M4 14h6m-6 0l3-3m-3 3l3 3M20 10h-6m6 0l-3-3m3 3l-3 3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg>
+      <h2 id="compress-title">Compress &amp; Optimize PDF</h2>
+    </div>
+    <button type="button" id="compress-close" class="dlg-x" aria-label="Close">&times;</button>
+  </div>
+  <div class="compress-body">
+    <!-- File overview -->
+    <div class="compress-file-info">
+      <div class="prop-stat"><span class="lbl">FILE NAME</span><b id="compress-fname" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">ORIGINAL SIZE</span><b id="compress-fsize" class="val">—</b></div>
+      <div class="prop-stat"><span class="lbl">PAGES</span><b id="compress-fpages" class="val">—</b></div>
+    </div>
+
+    <!-- Presets -->
+    <div class="compress-section-title">Compression Profile:</div>
+    <div class="compress-presets">
+      <label class="compress-card active" data-preset="balanced">
+        <input type="radio" name="compress-profile" value="balanced" checked>
+        <div class="compress-card-body">
+          <div class="compress-card-title">Balanced (Recommended)</div>
+          <div class="compress-card-desc">150 DPI &middot; 75% Quality. Preserves crisp, sharp text while reducing file size by 40–70%.</div>
+        </div>
+      </label>
+      <label class="compress-card" data-preset="max">
+        <input type="radio" name="compress-profile" value="max">
+        <div class="compress-card-body">
+          <div class="compress-card-title">Maximum Compression</div>
+          <div class="compress-card-desc">100 DPI &middot; 55% Quality. Smallest file size for strict email attachments or upload portals.</div>
+        </div>
+      </label>
+      <label class="compress-card" data-preset="light">
+        <input type="radio" name="compress-profile" value="light">
+        <div class="compress-card-body">
+          <div class="compress-card-title">Light Compression</div>
+          <div class="compress-card-desc">200 DPI &middot; 85% Quality. Retains high-fidelity imagery and vector sharpness with moderate size savings.</div>
+        </div>
+      </label>
+      <label class="compress-card" data-preset="custom">
+        <input type="radio" name="compress-profile" value="custom">
+        <div class="compress-card-body">
+          <div class="compress-card-title">Custom DPI &amp; Quality</div>
+          <div class="compress-card-desc">Fine-tune target raster resolution and JPEG encoding parameters manually.</div>
+        </div>
+      </label>
+    </div>
+
+    <!-- Custom settings drawer -->
+    <div id="compress-custom-panel" class="compress-custom-panel hide">
+      <div class="compress-slider-row">
+        <div class="compress-slider-hdr">
+          <label for="compress-custom-dpi">Target Resolution (DPI):</label>
+          <span id="compress-dpi-val">150 DPI</span>
+        </div>
+        <input type="range" id="compress-custom-dpi" min="72" max="250" step="5" value="150">
+      </div>
+      <div class="compress-slider-row">
+        <div class="compress-slider-hdr">
+          <label for="compress-custom-quality">JPEG Quality (%):</label>
+          <span id="compress-quality-val">75%</span>
+        </div>
+        <input type="range" id="compress-custom-quality" min="30" max="95" step="5" value="75">
+      </div>
+    </div>
+
+    <div class="compress-options" style="margin-top:10px">
+      <label class="perm-cb">
+        <input type="checkbox" id="compress-strip-meta" checked>
+        <span>Strip hidden metadata and catalog streams to further reduce size</span>
+      </label>
+    </div>
+
+    <!-- Progress UI -->
+    <div id="compress-prog" class="hide" style="margin:14px 0">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+        <span id="compress-stat">Compressing pages…</span>
+        <span id="compress-pct">0%</span>
+      </div>
+      <div style="height:6px;background:var(--paper);border-radius:3px;overflow:hidden">
+        <div id="compress-bar" style="height:100%;width:0;background:var(--o);transition:width .2s"></div>
+      </div>
+    </div>
+
+    <!-- Result stats comparison banner -->
+    <div id="compress-result" class="compress-result hide">
+      <div class="compress-res-left">
+        <div class="compress-res-label">Optimization Results:</div>
+        <div class="compress-res-vals">
+          <span id="compress-res-old" class="old-size">0 MB</span>
+          <span class="arr">&rarr;</span>
+          <span id="compress-res-new" class="new-size">0 MB</span>
+        </div>
+      </div>
+      <div id="compress-res-badge" class="compress-badge">-0%</div>
+    </div>
+  </div>
+  <div class="row ptbar" style="margin-top:16px">
+    <button type="button" id="compress-start-btn" class="pri">Start Compression</button>
+    <button type="button" id="compress-dl-btn" class="pri hide">Download Compressed PDF</button>
+    <button type="button" id="compress-view-btn" class="btn hide">Open in Folix</button>
+    <button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button>
+  </div>
+</dialog>
 <div id="ttsbar" class="hide" role="group" aria-label="Read aloud controls"><button id="ttsprev" type="button" aria-label="Previous sentence">&lsaquo;</button><button id="ttsplay" type="button">Pause</button><button id="ttsnext" type="button" aria-label="Next sentence">&rsaquo;</button><button id="ttsrate" type="button" aria-label="Reading speed">1&times;</button><select id="ttsv" aria-label="Voice"></select><button id="ttsstop" type="button">Stop</button></div>
 <div id="more" class="pop" aria-label="More tools"></div>
 <nav id="mnav" class="pop" aria-label="Site"><a href="index.html">Viewer</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="copyright.html">Copyright</a><button type="button" id="hkb">Shortcuts</button><button type="button" id="kz"></button><button type="button" id="rec"></button><button type="button" data-theme-toggle="text"></button></nav>
@@ -478,7 +1110,7 @@
 <div id="msg" role="status"></div>
 <aside id="cookie-notice" class="cookie-banner hide" role="region" aria-label="Privacy and local storage notice">
   <div class="cookie-body">
-    <div class="cookie-icon" aria-hidden="true">🍪</div>
+    <div class="cookie-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
     <div class="cookie-text">
       <strong>Zero-Tracking Notice:</strong> Folix runs 100% locally in your browser. We store your theme, reading progress, and annotations strictly on your device (<code style="font-size:11px">localStorage</code> / <code style="font-size:11px">IndexedDB</code>). Zero analytics, zero ad trackers, zero server uploads. See our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.
     </div>
@@ -493,4 +1125,4 @@
 <script src="lib/ocr/worker-bundle.js?v=2.6"></script>
 <script src="lib/ocr/lang/ita.js"></script>
 <script src="lib/ocr/lang/eng.js"></script>
-<script src="config.js"></script><script src="app.js?v=3.3"></script><script src="create.js?v=1.2"></script></body></html>
+<script src="config.js?v=1.3.8"></script><script src="app.js?v=1.3.8"></script><script src="create.js?v=1.3.8"></script><script src="ui-fx.js?v=1.3.8"></script></body></html>

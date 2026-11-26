@@ -1,6 +1,6 @@
 /**
  * @file config.js
- * @description Centralized runtime configuration for Folix PDF Viewer.
+ * @description Centralized runtime configuration for Folix - A FloppersBlop Product.
  *
  * This configuration object is exposed globally on `window.FOLIX_CONFIG`.
  * It provides site metadata, branding constants, vendor library file paths,
@@ -35,7 +35,7 @@ window.FOLIX_CONFIG = {
   owner: 'FloppersBlop',
 
   /** Application semantic version */
-  version: '1.2.0',
+  version: '1.3.0',
 
   /** Author and maintainer */
   author: 'Yash Arya',
@@ -53,7 +53,7 @@ window.FOLIX_CONFIG = {
   year: '2026',
 
   /** Display date of the latest documentation / legal update */
-  updated: '24 November 2026',
+  updated: '25 November 2026',
 
   /**
    * Path to the Mozilla PDF.js Web Worker script.
@@ -67,6 +67,12 @@ window.FOLIX_CONFIG = {
    * to keep initial page load lightweight.
    */
   pdfLibSrc: 'lib/pdf-lib.min.js',
+
+  /**
+   * Path to the client-side PDF encryption engine.
+   * Loaded dynamically when password protecting or encrypting documents.
+   */
+  pdfEncryptSrc: 'lib/pdf-encrypt.min.js',
 
   /**
    * Path to the Tesseract.js OCR library bundle.

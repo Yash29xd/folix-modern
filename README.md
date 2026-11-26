@@ -1,4 +1,4 @@
-# Folix PDF Viewer
+# Folix - A FloppersBlop Product
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-ES2022+-f7df1e.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -76,6 +76,10 @@ Folix eliminates the trade-off between privacy, functionality, and performance:
 
 | Feature Category | Capabilities |
 | :--- | :--- |
+| **Security & Privacy (v1.3)** | True client-side PDF redaction with irreversible vector and text eradication, on-device 128-bit password encryption with granular permissions (printing, copying, forms, assembly), and Document Properties inspector with one-click metadata & XMP stripping. |
+| **Security & Privacy (v1.3)** | True client-side permanent redaction & sanitization (destroys underlying text tokens & font layers), 128-bit password encryption with granular permissions, and document properties inspector with one-click metadata stripping. |
+| **Productivity & Views (v1.3)** | Fuzzy command palette (`Ctrl+K`), borderless presentation mode (`F5`) with glowing laser pointer cursor, area / snip OCR (crop-to-OCR), client-side PDF compression (100–200 DPI JPEG re-encoding), and annotations summary sidebar with Markdown (.md) export. |
+| **Document Creation (v1.2)** | Create PDF from multi-image file pickers with visual page tools, or write formatted documents in full-window MS Word-style rich text studio (ribbon tabs, A4 pagination, tables, pictures, zoom, vector-crisp 2x PDF baking). |
 | **Document Viewing** | Continuous vertical virtual scrolling, lazy canvas rendering, fit-to-width, fit-to-height, fit-to-content (smart margin trim), two-page spread, smooth pinch-to-zoom, and 90° page rotation. |
 | **Optical Character Recognition (OCR)** | On-device Tesseract.js WebAssembly engine for scanned PDFs. Multilingual recognition (offline Italian & English bundled, plus Spanish, French, German, and more), searchable text extraction, invisible text layer injection, and searchable PDF export. |
 | **Annotations Studio** | Pen (fine vector ink), Marker (semi-transparent highlighter), Text Highlight (selection-aware), Textbox (inline typography), Sticky Notes (collapsible badges), Digital Signatures (draw or cursive typing), and precision Eraser. |
@@ -414,7 +418,7 @@ All site-wide metadata, owner information, and rendering limits are isolated ins
 ```javascript
 window.FOLIX_CONFIG = {
   /** Application display name shown in page headers and titles */
-  name: 'Folix PDF Viewer',
+  name: 'Folix - A FloppersBlop Product',
 
   /** Legal publisher or parent brand name */
   owner: 'FloppersBlop',
