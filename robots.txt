@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yash29xd.github.io/folix-modern/sitemap.xml
